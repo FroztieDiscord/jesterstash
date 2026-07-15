@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { Package, DollarSign, ShoppingCart, TrendingUp, AlertTriangle, ArrowRight, Infinity as InfinityIcon } from "lucide-react";
+import { Package, DollarSign, ShoppingCart, TrendingUp, AlertTriangle, ArrowRight } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, formatCurrency } from "@/lib/stockflow-store";
 import { Badge } from "@/components/ui/badge";
