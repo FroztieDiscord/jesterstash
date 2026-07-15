@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/sale")({
+export const Route = createFileRoute("/_authenticated/sale")({
   head: () => ({ meta: [{ title: "Record Sale — StockFlow" }] }),
   component: SalePage,
 });

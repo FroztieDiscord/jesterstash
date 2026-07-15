@@ -5,7 +5,7 @@ import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, formatCurrency } from "@/lib/stockflow-store";
 import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 

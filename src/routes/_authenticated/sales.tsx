@@ -3,7 +3,7 @@ import { Receipt, Clock } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, formatCurrency, type Sale } from "@/lib/stockflow-store";
 
-export const Route = createFileRoute("/sales")({
+export const Route = createFileRoute("/_authenticated/sales")({
   head: () => ({ meta: [{ title: "Sales History — StockFlow" }] }),
   component: SalesPage,
 });
