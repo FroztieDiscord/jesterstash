@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { Package, DollarSign, ShoppingCart, TrendingUp, AlertTriangle, ArrowRight } from "lucide-react";
+import { Package, DollarSign, ShoppingCart, TrendingUp, AlertTriangle, ArrowRight, Infinity as InfinityIcon } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, formatCurrency } from "@/lib/stockflow-store";
 import { Badge } from "@/components/ui/badge";
@@ -21,12 +21,17 @@ function Dashboard() {
   const salesWeek = sales.filter((s) => new Date(s.createdAt).getTime() >= startOfWeek);
   const salesMonth = sales.filter((s) => new Date(s.createdAt).getTime() >= startOfMonth);
 
-  const stockValue = products.reduce((sum, p) => sum + p.cost * p.stock, 0);
+  const stockValue = products.reduce(
+    (sum, p) => sum + (p.unlimited ? 0 : p.cost * p.stock),
+    0,
+  );
   const todayTotal = salesToday.reduce((s, x) => s + x.total, 0);
   const weekTotal = salesWeek.reduce((s, x) => s + x.total, 0);
   const monthTotal = salesMonth.reduce((s, x) => s + x.total, 0);
 
-  const lowStock = products.filter((p) => p.stock <= p.lowStockThreshold);
+  const lowStock = products.filter(
+    (p) => !p.unlimited && p.stock <= p.lowStockThreshold,
+  );
 
   return (
     <StockFlowLayout>
