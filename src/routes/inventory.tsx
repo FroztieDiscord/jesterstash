@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -187,6 +188,8 @@ function ProductDialog({
   const [stock, setStock] = useState(String(initial?.stock ?? ""));
   const [threshold, setThreshold] = useState(String(initial?.lowStockThreshold ?? 5));
   const [barcode, setBarcode] = useState(initial?.barcode ?? "");
+  const [unlimited, setUnlimited] = useState<boolean>(initial?.unlimited ?? false);
+  const [image, setImage] = useState(initial?.image ?? "");
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -199,6 +202,8 @@ function ProductDialog({
       stock: Number(stock) || 0,
       lowStockThreshold: Number(threshold) || 0,
       barcode: barcode.trim() || undefined,
+      unlimited,
+      image: image.trim() || undefined,
     };
     if (initial) store.updateProduct(initial.id, data);
     else store.addProduct(data);
@@ -217,6 +222,9 @@ function ProductDialog({
         <Field label="Category">
           <Input value={category} onChange={(e) => setCategory(e.target.value)} />
         </Field>
+        <Field label="Image URL (optional)">
+          <Input value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://..." />
+        </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Price">
             <Input type="number" inputMode="decimal" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
@@ -225,14 +233,23 @@ function ProductDialog({
             <Input type="number" inputMode="decimal" step="0.01" value={cost} onChange={(e) => setCost(e.target.value)} />
           </Field>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Stock">
-            <Input type="number" inputMode="numeric" value={stock} onChange={(e) => setStock(e.target.value)} />
-          </Field>
-          <Field label="Low stock at">
-            <Input type="number" inputMode="numeric" value={threshold} onChange={(e) => setThreshold(e.target.value)} />
-          </Field>
+        <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+          <div>
+            <div className="text-sm font-medium">Unlimited stock</div>
+            <div className="text-xs text-muted-foreground">Never runs out</div>
+          </div>
+          <Switch checked={unlimited} onCheckedChange={setUnlimited} />
         </div>
+        {!unlimited && (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Stock">
+              <Input type="number" inputMode="numeric" value={stock} onChange={(e) => setStock(e.target.value)} />
+            </Field>
+            <Field label="Low stock at">
+              <Input type="number" inputMode="numeric" value={threshold} onChange={(e) => setThreshold(e.target.value)} />
+            </Field>
+          </div>
+        )}
         <Field label="Barcode (optional)">
           <Input value={barcode} onChange={(e) => setBarcode(e.target.value)} />
         </Field>
