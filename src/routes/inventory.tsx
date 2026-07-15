@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Package, Plus, Search, Trash2, Pencil } from "lucide-react";
+import { Package, Plus, Search, Trash2, Pencil, Infinity as InfinityIcon } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, store, formatCurrency, type Product } from "@/lib/stockflow-store";
 import { Input } from "@/components/ui/input";
@@ -116,19 +116,29 @@ function InventoryPage() {
               key={p.id}
               className="overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]"
             >
-              <div className="flex aspect-[16/7] items-center justify-center bg-muted">
-                <Package className="h-10 w-10 text-muted-foreground/50" />
+              <div className="flex aspect-[16/7] items-center justify-center overflow-hidden bg-muted">
+                {p.image ? (
+                  <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                ) : (
+                  <Package className="h-10 w-10 text-muted-foreground/50" />
+                )}
               </div>
               <div className="flex items-center justify-between gap-3 p-4">
                 <div className="min-w-0">
                   <div className="truncate font-semibold">{p.name}</div>
                   <div className="text-sm text-muted-foreground">{p.category}</div>
-                  <div className="mt-1 text-sm">
+                  <div className="mt-1 flex items-center gap-1.5 text-sm">
                     <span className="font-semibold">{formatCurrency(p.price)}</span>
-                    <span className="text-muted-foreground">
-                      {" · "}
-                      {p.stock > 0 ? `${p.stock} in stock` : "Out of stock"}
-                    </span>
+                    <span className="text-muted-foreground">·</span>
+                    {p.unlimited ? (
+                      <span className="inline-flex items-center gap-1 text-muted-foreground">
+                        <InfinityIcon className="h-4 w-4" /> in stock
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        {p.stock > 0 ? `${p.stock} in stock` : "Out of stock"}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex shrink-0 gap-1">
