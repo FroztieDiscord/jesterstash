@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Package, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-const searchSchema = z.object({
-  mode: z.enum(["signin", "apply"]).catch("signin").default("signin"),
-});
-
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (search: Record<string, unknown>) => ({
+    mode: search.mode === "apply" ? "apply" : "signin",
+  }) as { mode: "signin" | "apply" },
   head: () => ({ meta: [{ title: "Sign in — StockFlow" }] }),
   component: AuthPage,
 });
