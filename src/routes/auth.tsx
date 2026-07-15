@@ -10,9 +10,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
-    mode: search.mode === "apply" ? "apply" : "signin",
-  }) as { mode: "signin" | "apply" },
+  validateSearch: () => ({}) as Record<string, never>,
   head: () => ({ meta: [{ title: "Sign in — StockFlow" }] }),
   component: AuthPage,
 });
@@ -23,13 +21,10 @@ const credSchema = z.object({
 });
 
 function AuthPage() {
-  const { mode } = Route.useSearch();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-
-  const isApply = mode === "apply";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,23 +35,12 @@ function AuthPage() {
     }
     setBusy(true);
     try {
-      if (isApply) {
-        const { error } = await supabase.auth.signUp({
-          email: parsed.data.email,
-          password: parsed.data.password,
-          options: { emailRedirectTo: window.location.origin },
-        });
-        if (error) throw error;
-        toast.success("Application submitted. You'll get access once approved.");
-        navigate({ to: "/pending" });
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: parsed.data.email,
-          password: parsed.data.password,
-        });
-        if (error) throw error;
-        navigate({ to: "/dashboard" });
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
+      if (error) throw error;
+      navigate({ to: "/dashboard" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -79,12 +63,11 @@ function AuthPage() {
 
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            {isApply ? "Apply for access" : "Sign in"}
+            Sign in
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {isApply
-              ? "Submit your email and a password. An admin will review and approve you."
-              : "Sign in with your admin or approved team member account."}
+            This app is invite-only. Sign in with the credentials your admin
+            shared with you.
           </p>
         </div>
 
@@ -105,27 +88,19 @@ function AuthPage() {
             <Input
               id="password"
               type="password"
-              autoComplete={isApply ? "new-password" : "current-password"}
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
           <Button type="submit" disabled={busy} className="h-11">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : isApply ? "Submit application" : "Sign in"}
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign in"}
           </Button>
         </form>
 
-        <div className="text-center text-sm text-muted-foreground">
-          {isApply ? (
-            <Link to="/auth" search={{ mode: "signin" }} className="text-primary hover:underline">
-              Already have access? Sign in
-            </Link>
-          ) : (
-            <Link to="/auth" search={{ mode: "apply" }} className="text-primary hover:underline">
-              Team member? Apply for access
-            </Link>
-          )}
+        <div className="text-center text-xs text-muted-foreground">
+          Need access? Ask your admin to invite you.
         </div>
       </div>
     </div>
