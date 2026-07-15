@@ -58,7 +58,7 @@ function AuthPage() {
           >
             <Package className="h-4 w-4" />
           </div>
-          StockFlow
+          Jester&rsquo;s Stash
         </Link>
 
         <div>

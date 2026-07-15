@@ -89,7 +89,7 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
             </SheetContent>
           </Sheet>
           <Link to="/dashboard" className="text-lg font-bold tracking-tight">
-            StockFlow
+            Jester&rsquo;s Stash
           </Link>
         </div>
       </header>
