@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SaleRouteImport } from './routes/sale'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SaleRoute = SaleRouteImport.update({
+  id: '/sale',
+  path: '/sale',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InventoryRoute = InventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRoute
+  '/sale': typeof SaleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRoute
+  '/sale': typeof SaleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/inventory': typeof InventoryRoute
+  '/sale': typeof SaleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/inventory'
+  fullPaths: '/' | '/inventory' | '/sale'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/inventory'
-  id: '__root__' | '/' | '/inventory'
+  to: '/' | '/inventory' | '/sale'
+  id: '__root__' | '/' | '/inventory' | '/sale'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   InventoryRoute: typeof InventoryRoute
+  SaleRoute: typeof SaleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sale': {
+      id: '/sale'
+      path: '/sale'
+      fullPath: '/sale'
+      preLoaderRoute: typeof SaleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/inventory': {
       id: '/inventory'
       path: '/inventory'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   InventoryRoute: InventoryRoute,
+  SaleRoute: SaleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
