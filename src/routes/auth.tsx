@@ -63,12 +63,11 @@ function AuthPage() {
 
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            {isApply ? "Apply for access" : "Sign in"}
+            Sign in
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {isApply
-              ? "Submit your email and a password. An admin will review and approve you."
-              : "Sign in with your admin or approved team member account."}
+            This app is invite-only. Sign in with the credentials your admin
+            shared with you.
           </p>
         </div>
 
@@ -89,27 +88,19 @@ function AuthPage() {
             <Input
               id="password"
               type="password"
-              autoComplete={isApply ? "new-password" : "current-password"}
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
           <Button type="submit" disabled={busy} className="h-11">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : isApply ? "Submit application" : "Sign in"}
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign in"}
           </Button>
         </form>
 
-        <div className="text-center text-sm text-muted-foreground">
-          {isApply ? (
-            <Link to="/auth" search={{ mode: "signin" }} className="text-primary hover:underline">
-              Already have access? Sign in
-            </Link>
-          ) : (
-            <Link to="/auth" search={{ mode: "apply" }} className="text-primary hover:underline">
-              Team member? Apply for access
-            </Link>
-          )}
+        <div className="text-center text-xs text-muted-foreground">
+          Need access? Ask your admin to invite you.
         </div>
       </div>
     </div>
