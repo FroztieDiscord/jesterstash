@@ -28,7 +28,7 @@ export const Route = createFileRoute("/_authenticated/admin/applications")({
     // Route context is populated by the _authenticated gate.
     if (!(context as { isAdmin?: boolean }).isAdmin) throw redirect({ to: "/dashboard" });
   },
-  head: () => ({ meta: [{ title: "Applications — StockFlow" }] }),
+  head: () => ({ meta: [{ title: "Team Access — Jester's Stash" }] }),
   component: ApplicationsPage,
 });
 

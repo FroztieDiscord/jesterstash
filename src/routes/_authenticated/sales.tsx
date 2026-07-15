@@ -4,7 +4,7 @@ import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, formatCurrency, type Sale } from "@/lib/stockflow-store";
 
 export const Route = createFileRoute("/_authenticated/sales")({
-  head: () => ({ meta: [{ title: "Sales History — StockFlow" }] }),
+  head: () => ({ meta: [{ title: "Sales History — Jester's Stash" }] }),
   component: SalesPage,
 });
 

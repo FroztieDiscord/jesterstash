@@ -46,7 +46,7 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
             </SheetTrigger>
             <SheetContent side="left" className="flex w-72 flex-col p-0">
               <SheetHeader className="border-b border-border p-5">
-                <SheetTitle className="text-left text-xl font-bold">StockFlow</SheetTitle>
+                <SheetTitle className="text-left text-xl font-bold">Jester&#39;s Stash</SheetTitle>
                 {user?.email && (
                   <div className="text-left text-xs text-muted-foreground">
                     {user.email}
@@ -89,7 +89,7 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
             </SheetContent>
           </Sheet>
           <Link to="/dashboard" className="text-lg font-bold tracking-tight">
-            StockFlow
+            Jester&rsquo;s Stash
           </Link>
         </div>
       </header>

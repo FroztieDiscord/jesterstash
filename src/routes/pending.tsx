@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/pending")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Application pending — StockFlow" }] }),
+  head: () => ({ meta: [{ title: "Application pending — Jester's Stash" }] }),
   component: PendingPage,
 });
 

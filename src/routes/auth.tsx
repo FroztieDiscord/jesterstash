@@ -11,7 +11,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/auth")({
   ssr: false,
   validateSearch: () => ({}) as Record<string, never>,
-  head: () => ({ meta: [{ title: "Sign in — StockFlow" }] }),
+  head: () => ({ meta: [{ title: "Sign in — Jester's Stash" }] }),
   component: AuthPage,
 });
 
@@ -58,7 +58,7 @@ function AuthPage() {
           >
             <Package className="h-4 w-4" />
           </div>
-          StockFlow
+          Jester&rsquo;s Stash
         </Link>
 
         <div>
