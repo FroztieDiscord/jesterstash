@@ -31,14 +31,14 @@ function Landing() {
             <Package className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-xl font-bold tracking-tight">StockFlow</div>
+            <div className="text-xl font-bold tracking-tight">Jester&#39;s Stash</div>
             <div className="text-xs text-muted-foreground">Inventory &amp; sales</div>
           </div>
         </div>
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight">Private, invite-only</h1>
           <p className="text-sm text-muted-foreground">
-            StockFlow is locked to approved team members. Sign in with the
+            Jester&rsquo;s Stash is locked to approved team members. Sign in with the
             credentials your admin shared with you.
           </p>
         </div>

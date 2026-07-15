@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/sale")({
-  head: () => ({ meta: [{ title: "Record Sale — StockFlow" }] }),
+  head: () => ({ meta: [{ title: "Record Sale — Jester's Stash" }] }),
   component: SalePage,
 });
 

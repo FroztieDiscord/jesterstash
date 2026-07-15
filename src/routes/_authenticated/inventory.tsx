@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/inventory")({
-  head: () => ({ meta: [{ title: "Inventory — StockFlow" }] }),
+  head: () => ({ meta: [{ title: "Inventory — Jester's Stash" }] }),
   component: InventoryPage,
 });
 

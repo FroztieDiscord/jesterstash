@@ -79,9 +79,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "StockFlow — Inventory & Sales" },
+      { title: "Jester's Stash — Inventory & Sales" },
       { name: "description", content: "Track inventory, record sales, and monitor stock in one place." },
-      { property: "og:title", content: "StockFlow — Inventory & Sales" },
+      { property: "og:title", content: "Jester's Stash — Inventory & Sales" },
       { property: "og:description", content: "Track inventory, record sales, and monitor stock in one place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
