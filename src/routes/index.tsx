@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { Package, Lock, UserPlus } from "lucide-react";
+import { Package, Lock, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
@@ -36,28 +36,24 @@ function Landing() {
           </div>
         </div>
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight">Team access, by approval</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Private, invite-only</h1>
           <p className="text-sm text-muted-foreground">
-            Admins run the shop. Team members apply and start recording sales once approved.
+            StockFlow is locked to approved team members. Sign in with the
+            credentials your admin shared with you.
           </p>
         </div>
         <div className="grid gap-2">
           <Link
             to="/auth"
-            search={{ mode: "signin" }}
             className="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-primary)] hover:opacity-95"
           >
             <Lock className="h-4 w-4" />
             Sign in
           </Link>
-          <Link
-            to="/auth"
-            search={{ mode: "apply" }}
-            className="flex items-center justify-center gap-2 rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:bg-muted"
-          >
-            <UserPlus className="h-4 w-4" />
-            Apply as a team member
-          </Link>
+          <div className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-3 text-xs text-muted-foreground">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            No public sign-up — access is granted by the admin
+          </div>
         </div>
       </div>
     </div>
