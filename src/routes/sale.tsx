@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Package, Search, ShoppingCart, Minus, Plus, X } from "lucide-react";
+import { Package, Search, ShoppingCart, Minus, Plus, X, Infinity as InfinityIcon } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, store, formatCurrency, type SaleItem } from "@/lib/stockflow-store";
 import { Input } from "@/components/ui/input";
@@ -31,10 +31,10 @@ function SalePage() {
   function add(pid: string) {
     const p = products.find((x) => x.id === pid);
     if (!p) return;
-    if (p.stock <= 0) return;
+    if (!p.unlimited && p.stock <= 0) return;
     const existing = cart.find((c) => c.productId === pid);
     if (existing) {
-      if (existing.quantity >= p.stock) return;
+      if (!p.unlimited && existing.quantity >= p.stock) return;
       setCart(
         cart.map((c) => (c.productId === pid ? { ...c, quantity: c.quantity + 1 } : c)),
       );
@@ -46,7 +46,9 @@ function SalePage() {
   function setQty(pid: string, qty: number) {
     const p = products.find((x) => x.id === pid);
     if (!p) return;
-    const clamped = Math.max(0, Math.min(p.stock, qty));
+    const clamped = p.unlimited
+      ? Math.max(0, qty)
+      : Math.max(0, Math.min(p.stock, qty));
     if (clamped === 0) {
       setCart(cart.filter((c) => c.productId !== pid));
     } else {
@@ -82,7 +84,7 @@ function SalePage() {
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {list.map((p) => {
-          const out = p.stock <= 0;
+          const out = !p.unlimited && p.stock <= 0;
           return (
             <button
               key={p.id}
@@ -91,22 +93,30 @@ function SalePage() {
               disabled={out}
               className="group overflow-hidden rounded-2xl border border-border bg-card text-left shadow-[var(--shadow-card)] transition disabled:opacity-60 enabled:hover:border-primary/40 enabled:active:scale-[0.99]"
             >
-              <div className="flex aspect-square items-center justify-center bg-muted">
-                <Package className="h-10 w-10 text-muted-foreground/50" />
+              <div className="flex aspect-square items-center justify-center overflow-hidden bg-muted">
+                {p.image ? (
+                  <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                ) : (
+                  <Package className="h-10 w-10 text-muted-foreground/50" />
+                )}
               </div>
               <div className="p-3">
                 <div className="truncate text-sm text-muted-foreground">{p.name}</div>
                 <div className="mt-1 flex items-center justify-between">
                   <span className="font-bold">{formatCurrency(p.price)}</span>
-                  <span
-                    className={
-                      out
-                        ? "text-xs font-medium text-destructive"
-                        : "text-xs text-muted-foreground"
-                    }
-                  >
-                    {out ? "Out" : `${p.stock}`}
-                  </span>
+                  {p.unlimited ? (
+                    <InfinityIcon className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <span
+                      className={
+                        out
+                          ? "text-xs font-medium text-destructive"
+                          : "text-xs text-muted-foreground"
+                      }
+                    >
+                      {out ? "Out" : `${p.stock}`}
+                    </span>
+                  )}
                 </div>
               </div>
             </button>
