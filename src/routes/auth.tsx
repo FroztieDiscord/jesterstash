@@ -25,6 +25,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,11 +36,26 @@ function AuthPage() {
     }
     setBusy(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: parsed.data.email,
-        password: parsed.data.password,
-      });
-      if (error) throw error;
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email: parsed.data.email,
+          password: parsed.data.password,
+          options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        toast.success("Account created. Signing you in…");
+        const { error: signInErr } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.password,
+        });
+        if (signInErr) throw signInErr;
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.password,
+        });
+        if (error) throw error;
+      }
       navigate({ to: "/dashboard" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -63,11 +79,12 @@ function AuthPage() {
 
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Sign in
+            {mode === "signup" ? "Create account" : "Sign in"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            This app is invite-only. Sign in with the credentials your admin
-            shared with you.
+            {mode === "signup"
+              ? "Create your account to get started."
+              : "This app is invite-only. Sign in with the credentials your admin shared with you."}
           </p>
         </div>
 
@@ -95,12 +112,22 @@ function AuthPage() {
             />
           </div>
           <Button type="submit" disabled={busy} className="h-11">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign in"}
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signup" ? "Create account" : "Sign in"}
           </Button>
         </form>
 
         <div className="text-center text-xs text-muted-foreground">
-          Need access? Ask your admin to invite you.
+          {mode === "signup" ? (
+            <>
+              Already have an account?{" "}
+              <button type="button" className="underline" onClick={() => setMode("signin")}>Sign in</button>
+            </>
+          ) : (
+            <>
+              Need an account?{" "}
+              <button type="button" className="underline" onClick={() => setMode("signup")}>Create one</button>
+            </>
+          )}
         </div>
       </div>
     </div>
