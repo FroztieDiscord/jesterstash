@@ -79,13 +79,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Jester's Stash — Inventory & Sales" },
-      { name: "description", content: "Track inventory, record sales, and monitor stock in one place." },
-      { property: "og:title", content: "Jester's Stash — Inventory & Sales" },
-      { property: "og:description", content: "Track inventory, record sales, and monitor stock in one place." },
+      { title: "Jesterofalltraits" },
+      { name: "description", content: "Jesterofalltraits" },
+      { property: "og:title", content: "Jesterofalltraits" },
+      { property: "og:description", content: "Jesterofalltraits" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Jesterofalltraits" },
+      { name: "twitter:description", content: "Jesterofalltraits" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/21742fa3-faaf-4180-8697-7afb1b323fa4/id-preview-fc242ab1--1ee0c522-6fbf-4a4d-9a41-5d2a86fad859.lovable.app-1784142929435.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/21742fa3-faaf-4180-8697-7afb1b323fa4/id-preview-fc242ab1--1ee0c522-6fbf-4a4d-9a41-5d2a86fad859.lovable.app-1784142929435.png" },
     ],
     links: [
       {
