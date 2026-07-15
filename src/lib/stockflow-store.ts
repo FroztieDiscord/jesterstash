@@ -1,4 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
+import aceImage from "@/assets/ace-ultra-premium.webp.asset.json";
 
 export type Product = {
   id: string;
@@ -9,6 +10,8 @@ export type Product = {
   stock: number;
   barcode?: string;
   lowStockThreshold: number;
+  unlimited?: boolean;
+  image?: string;
 };
 
 export type SaleItem = {
@@ -30,7 +33,7 @@ type Store = {
   sales: Sale[];
 };
 
-const KEY = "stockflow:v1";
+const KEY = "stockflow:v2";
 const listeners = new Set<() => void>();
 let cache: Store | null = null;
 
@@ -39,19 +42,23 @@ const seed: Store = {
     {
       id: "p_vape1",
       name: "Vape 1ml",
-      category: "Uncategorized",
-      price: 15,
-      cost: 8,
+      category: "Vapes",
+      price: 1,
+      cost: 0,
       stock: 0,
+      unlimited: true,
+      image: aceImage.url,
       lowStockThreshold: 5,
     },
     {
       id: "p_vape2",
       name: "Vape 2ml",
-      category: "Uncategorized",
-      price: 22,
-      cost: 12,
+      category: "Vapes",
+      price: 1,
+      cost: 0,
       stock: 0,
+      unlimited: true,
+      image: aceImage.url,
       lowStockThreshold: 5,
     },
   ],
@@ -135,7 +142,8 @@ export const store = {
     };
     const products = s.products.map((p) => {
       const it = items.find((i) => i.productId === p.id);
-      return it ? { ...p, stock: Math.max(0, p.stock - it.quantity) } : p;
+      if (!it || p.unlimited) return p;
+      return { ...p, stock: Math.max(0, p.stock - it.quantity) };
     });
     write({ products, sales: [sale, ...s.sales] });
     return sale;
