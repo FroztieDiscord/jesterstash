@@ -10,9 +10,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
-    mode: search.mode === "apply" ? "apply" : "signin",
-  }) as { mode: "signin" | "apply" },
+  validateSearch: () => ({}) as Record<string, never>,
   head: () => ({ meta: [{ title: "Sign in — StockFlow" }] }),
   component: AuthPage,
 });
@@ -23,13 +21,10 @@ const credSchema = z.object({
 });
 
 function AuthPage() {
-  const { mode } = Route.useSearch();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-
-  const isApply = mode === "apply";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,23 +35,12 @@ function AuthPage() {
     }
     setBusy(true);
     try {
-      if (isApply) {
-        const { error } = await supabase.auth.signUp({
-          email: parsed.data.email,
-          password: parsed.data.password,
-          options: { emailRedirectTo: window.location.origin },
-        });
-        if (error) throw error;
-        toast.success("Application submitted. You'll get access once approved.");
-        navigate({ to: "/pending" });
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: parsed.data.email,
-          password: parsed.data.password,
-        });
-        if (error) throw error;
-        navigate({ to: "/dashboard" });
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
+      if (error) throw error;
+      navigate({ to: "/dashboard" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
