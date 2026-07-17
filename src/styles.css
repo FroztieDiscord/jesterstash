@@ -106,8 +106,11 @@
   --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.5), 0 8px 24px -12px oklch(0 0 0 / 0.6), inset 0 1px 0 0 oklch(1 0 0 / 0.04);
   --shadow-primary: 0 20px 50px -20px oklch(0.5 0.2 28 / 0.5), 0 0 0 1px oklch(0.82 0.14 88 / 0.25), inset 0 1px 0 0 oklch(1 0 0 / 0.15);
   --shadow-gold: 0 0 0 1px oklch(0.82 0.14 88 / 0.25), 0 12px 40px -12px oklch(0.82 0.14 88 / 0.4);
-  --font-display: "Cormorant Garamond", "Times New Roman", serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", "Instrument Serif", "Times New Roman", serif;
+  --font-serif-italic: "Instrument Serif", "Times New Roman", serif;
+  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -177,8 +180,63 @@
 
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
+    font-optical-sizing: auto;
+    font-variation-settings: "opsz" 120, "SOFT" 30;
   }
+
+  button, a, [role="button"] {
+    transition: transform 0.35s var(--ease-spring), opacity 0.25s var(--ease-smooth), background-color 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth), box-shadow 0.35s var(--ease-smooth), border-color 0.35s var(--ease-smooth);
+  }
+  button:active, a:active, [role="button"]:active {
+    transform: scale(0.96);
+  }
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(12px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.9); }
+  60% { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.7s var(--ease-smooth) both;
+}
+
+@utility animate-pop-in {
+  animation: pop-in 0.55s var(--ease-spring) both;
+}
+
+@utility animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@utility stagger-children {
+  & > * {
+    animation: fade-up 0.7s var(--ease-smooth) both;
+  }
+  & > *:nth-child(1) { animation-delay: 0.05s; }
+  & > *:nth-child(2) { animation-delay: 0.12s; }
+  & > *:nth-child(3) { animation-delay: 0.19s; }
+  & > *:nth-child(4) { animation-delay: 0.26s; }
+  & > *:nth-child(5) { animation-delay: 0.33s; }
+  & > *:nth-child(6) { animation-delay: 0.4s; }
+}
+
+@utility bounce-tap {
+  transition: transform 0.4s var(--ease-spring);
+  &:hover { transform: translateY(-2px) scale(1.02); }
+  &:active { transform: scale(0.95); }
 }
 
 @utility text-gold {
@@ -230,12 +288,14 @@
 }
 
 @utility lift {
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  transition: transform 0.5s var(--ease-spring), box-shadow 0.45s var(--ease-smooth), border-color 0.35s ease;
+  will-change: transform;
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.005);
     border-color: oklch(0.82 0.14 88 / 0.45);
     box-shadow: 0 18px 40px -18px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(0.82 0.14 88 / 0.2), inset 0 1px 0 0 oklch(1 0 0 / 0.06);
   }
+  &:active { transform: translateY(-1px) scale(0.99); }
 }
 
 @utility pulse-gold {
