@@ -35,26 +35,27 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-4xl items-center gap-3 px-4">
+      <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.82 0.14 88 / 0.5), transparent)" }} />
+        <div className="mx-auto flex h-16 max-w-5xl items-center gap-3 px-5">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label="Open menu"
-              className="-ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-muted"
+              className="-ml-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 text-foreground/90 transition hover:border-primary/50 hover:text-primary"
             >
               <Menu className="h-5 w-5" />
             </SheetTrigger>
-            <SheetContent side="left" className="flex w-72 flex-col p-0">
-              <SheetHeader className="border-b border-border p-5">
-                <SheetTitle className="text-left text-xl font-bold">Jester&#39;s Stash</SheetTitle>
+            <SheetContent side="left" className="flex w-80 flex-col border-r border-border/60 bg-background/95 p-0 backdrop-blur-xl">
+              <SheetHeader className="border-b border-border/60 p-6">
+                <SheetTitle className="text-left text-2xl font-normal tracking-wide text-gold font-display">Jester&#39;s Stash</SheetTitle>
                 {user?.email && (
-                  <div className="text-left text-xs text-muted-foreground">
+                  <div className="text-left text-xs tracking-wide text-muted-foreground">
                     {user.email}
-                    {isAdmin && <span className="ml-1 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-accent-foreground">ADMIN</span>}
+                    {isAdmin && <span className="ml-2 rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-primary">Admin</span>}
                   </div>
                 )}
               </SheetHeader>
-              <nav className="flex-1 p-3">
+              <nav className="flex-1 space-y-1 p-3">
                 {items.map((item) => {
                   const Icon = item.icon;
                   const active = pathname === item.to;
@@ -64,23 +65,24 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
                       to={item.to}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                        "group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium tracking-wide transition-all",
                         active
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                          ? "bg-primary/10 text-primary shadow-[inset_0_1px_0_0_oklch(1_0_0_/_0.05)]"
+                          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                       )}
                     >
+                      {active && <span className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-gold" />}
                       <Icon className="h-4 w-4" />
                       {item.label}
                     </Link>
                   );
                 })}
               </nav>
-              <div className="border-t border-border p-3">
+              <div className="border-t border-border/60 p-3">
                 <button
                   type="button"
                   onClick={handleSignOut}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium tracking-wide text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
                 >
                   <LogOut className="h-4 w-4" />
                   Sign out
@@ -88,12 +90,13 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
               </div>
             </SheetContent>
           </Sheet>
-          <Link to="/dashboard" className="text-lg font-bold tracking-tight">
-            Jester&rsquo;s Stash
+          <Link to="/dashboard" className="flex items-baseline gap-2">
+            <span className="font-display text-2xl font-normal leading-none tracking-wide text-gold">Jester&rsquo;s Stash</span>
+            <span className="hidden text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground sm:inline">Premium</span>
           </Link>
         </div>
       </header>
-      <main className="mx-auto max-w-4xl px-4 py-6 pb-24">{children}</main>
+      <main className="mx-auto max-w-5xl px-5 py-8 pb-24">{children}</main>
     </div>
   );
 }
