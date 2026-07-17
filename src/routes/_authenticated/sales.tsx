@@ -1,7 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Receipt, Clock } from "lucide-react";
+import { Receipt, Clock, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
-import { useStore, formatCurrency, type Sale } from "@/lib/stockflow-store";
+import { useStore, store, formatCurrency, type Sale } from "@/lib/stockflow-store";
+import { useCurrentUser } from "@/lib/useCurrentUser";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/sales")({
   head: () => ({ meta: [{ title: "Sales History — Jester's Stash" }] }),
@@ -10,12 +24,44 @@ export const Route = createFileRoute("/_authenticated/sales")({
 
 function SalesPage() {
   const { sales } = useStore();
+  const { isAdmin } = useCurrentUser();
   const groups = groupByDay(sales);
   return (
     <StockFlowLayout>
-      <div className="mb-5">
-        <h1 className="text-3xl font-bold tracking-tight">Sales History</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{sales.length} transactions</p>
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Sales History</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{sales.length} transactions</p>
+        </div>
+        {isAdmin && sales.length > 0 && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Trash2 className="h-4 w-4" /> Clear all
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Clear all sales?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes all {sales.length} recorded transactions. This action
+                  cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    store.clearSales();
+                    toast.success("All sales cleared");
+                  }}
+                >
+                  Clear all
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
       {sales.length === 0 ? (
         <div className="rounded-2xl border border-border bg-card py-16 text-center text-muted-foreground">
@@ -48,7 +94,42 @@ function SalesPage() {
                             minute: "2-digit",
                           })}
                         </div>
-                        <div className="text-lg font-bold">{formatCurrency(s.total)}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-lg font-bold">{formatCurrency(s.total)}</div>
+                          {isAdmin && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                  aria-label="Delete sale"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete this sale?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Removes the entire transaction ({formatCurrency(s.total)}).
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => {
+                                      store.deleteSale(s.id);
+                                      toast.success("Sale deleted");
+                                    }}
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
                       </div>
                       <ul className="divide-y divide-border">
                         {s.items.map((i) => (
@@ -60,9 +141,45 @@ function SalesPage() {
                               {i.name}{" "}
                               <span className="text-muted-foreground">× {i.quantity}</span>
                             </span>
-                            <span className="font-medium">
-                              {formatCurrency(i.price * i.quantity)}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">
+                                {formatCurrency(i.price * i.quantity)}
+                              </span>
+                              {isAdmin && (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                                      aria-label={`Remove ${i.name}`}
+                                    >
+                                      <X className="h-3.5 w-3.5" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Remove {i.name}?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Removes this item from the sale. If it's the last item,
+                                        the whole sale is deleted.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => {
+                                          store.deleteSaleItem(s.id, i.productId);
+                                          toast.success("Item removed");
+                                        }}
+                                      >
+                                        Remove
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              )}
+                            </div>
                           </li>
                         ))}
                       </ul>
