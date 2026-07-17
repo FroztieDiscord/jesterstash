@@ -180,9 +180,17 @@
 
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     font-optical-sizing: auto;
-    font-variation-settings: "opsz" 120, "SOFT" 30;
+    font-variation-settings: "opsz" 144, "SOFT" 40;
+    font-weight: 500;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  h1 { font-weight: 400; }
+  p, li { text-wrap: pretty; }
+  body {
+    font-feature-settings: "ss01", "cv11", "calt";
   }
 
   button, a, [role="button"] {
@@ -237,6 +245,17 @@
   transition: transform 0.4s var(--ease-spring);
   &:hover { transform: translateY(-2px) scale(1.02); }
   &:active { transform: scale(0.95); }
+}
+
+@keyframes page-in {
+  0% { opacity: 0; transform: translateY(8px) scale(0.995); filter: blur(6px); }
+  60% { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@utility page-transition {
+  animation: page-in 0.55s var(--ease-smooth) both;
+  will-change: transform, opacity, filter;
 }
 
 @utility text-gold {
