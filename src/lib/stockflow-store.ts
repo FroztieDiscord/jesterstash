@@ -148,6 +148,27 @@ export const store = {
     write({ products, sales: [sale, ...s.sales] });
     return sale;
   },
+  deleteSale(id: string) {
+    const s = read();
+    write({ ...s, sales: s.sales.filter((x) => x.id !== id) });
+  },
+  deleteSaleItem(saleId: string, productId: string) {
+    const s = read();
+    const sales = s.sales
+      .map((sale) => {
+        if (sale.id !== saleId) return sale;
+        const items = sale.items.filter((i) => i.productId !== productId);
+        if (items.length === 0) return null;
+        const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        return { ...sale, items, total };
+      })
+      .filter((x): x is Sale => x !== null);
+    write({ ...s, sales });
+  },
+  clearSales() {
+    const s = read();
+    write({ ...s, sales: [] });
+  },
 };
 
 export function formatCurrency(n: number) {
