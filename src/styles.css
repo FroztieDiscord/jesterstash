@@ -288,12 +288,14 @@
 }
 
 @utility lift {
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  transition: transform 0.5s var(--ease-spring), box-shadow 0.45s var(--ease-smooth), border-color 0.35s ease;
+  will-change: transform;
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.005);
     border-color: oklch(0.82 0.14 88 / 0.45);
     box-shadow: 0 18px 40px -18px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(0.82 0.14 88 / 0.2), inset 0 1px 0 0 oklch(1 0 0 / 0.06);
   }
+  &:active { transform: translateY(-1px) scale(0.99); }
 }
 
 @utility pulse-gold {
