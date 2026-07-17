@@ -193,8 +193,6 @@
 
 @utility hairline-gold {
   position: relative;
-}
-@utility hairline-gold {
   &::after {
     content: "";
     position: absolute;
