@@ -11,7 +11,16 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/auth")({
   ssr: false,
   validateSearch: () => ({}) as Record<string, never>,
-  head: () => ({ meta: [{ title: "Sign in — Jester's Stash" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — Jester's Stash" },
+      { name: "description", content: "Sign in to Jester's Stash, the private inventory and sales portal. Access is restricted to approved team members with admin-issued credentials." },
+      { property: "og:title", content: "Sign in — Jester's Stash" },
+      { property: "og:description", content: "Sign in to the private Jester's Stash inventory and sales portal." },
+      { property: "og:url", content: "https://inventoryprojectschool.lovable.app/auth" },
+    ],
+    links: [{ rel: "canonical", href: "https://inventoryprojectschool.lovable.app/auth" }],
+  }),
   component: AuthPage,
 });
 
