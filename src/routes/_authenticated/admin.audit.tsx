@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { toast } from "sonner";
 
 type AuditEntry = {
@@ -24,18 +22,22 @@ type AuditEntry = {
 
 const PAGE_SIZES = [25, 50, 100, 200] as const;
 
-const searchSchema = z.object({
-  page: fallback(z.number().int(), 1).default(1),
-  pageSize: fallback(z.number().int(), 50).default(50),
-  from: fallback(z.string(), "").default(""),
-  to: fallback(z.string(), "").default(""),
-});
+type AuditSearch = { page: number; pageSize: number; from: string; to: string };
 
 export const Route = createFileRoute("/_authenticated/admin/audit")({
   beforeLoad: ({ context }) => {
     if (!(context as { isAdmin?: boolean }).isAdmin) throw redirect({ to: "/dashboard" });
   },
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (raw: Record<string, unknown>): AuditSearch => {
+    const pageRaw = Number(raw.page);
+    const sizeRaw = Number(raw.pageSize);
+    return {
+      page: Number.isFinite(pageRaw) && pageRaw >= 1 ? Math.floor(pageRaw) : 1,
+      pageSize: PAGE_SIZES.includes(sizeRaw as (typeof PAGE_SIZES)[number]) ? sizeRaw : 50,
+      from: typeof raw.from === "string" ? raw.from : "",
+      to: typeof raw.to === "string" ? raw.to : "",
+    };
+  },
   head: () => ({
     meta: [
       { title: "Audit Log — Jester's Stash" },
@@ -116,8 +118,8 @@ function AuditPage() {
     };
   }, [isFirstPage, isFiltered, pageSize]);
 
-  function setSearch(patch: Partial<z.infer<typeof searchSchema>>) {
-    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+  function setSearch(patch: Partial<AuditSearch>) {
+    void navigate({ search: (prev: AuditSearch) => ({ ...prev, ...patch }) });
   }
 
   async function exportCsv() {
