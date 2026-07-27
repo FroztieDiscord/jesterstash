@@ -85,6 +85,15 @@ export const denyApplication = createServerFn({ method: "POST" })
 export const claimAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    // Restrict bootstrap to the pre-approved owner email only, matching the
+    // auto_grant_owner_admin database trigger. Prevents a "first authenticated
+    // caller wins" takeover if the real owner has not yet claimed the workspace.
+    const OWNER_EMAIL = "jesterofalltraits@protonmail.com";
+    const callerEmail = (context.claims as { email?: string } | null)?.email?.toLowerCase();
+    if (!callerEmail || callerEmail !== OWNER_EMAIL) {
+      throw new Error("Forbidden");
+    }
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: existing, error } = await supabaseAdmin
       .from("user_roles")
