@@ -224,7 +224,7 @@ export const store = {
       if (!it || p.unlimited) return p;
       return { ...p, stock: Math.max(0, p.stock - it.quantity) };
     });
-    write({ products, sales: [sale, ...s.sales] });
+    write({ ...s, products, sales: [sale, ...s.sales] });
     return sale;
   },
   deleteSale(id: string) {
