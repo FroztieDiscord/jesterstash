@@ -590,3 +590,69 @@ html[data-reduce-motion="true"] .vault-beam::after { display: none; }
   background-size: 24px 24px, 32px 32px;
   background-position: 0 0, 12px 16px;
 }
+
+/* Global scan-beam — a slow amber sweep across the viewport. */
+@keyframes global-scan {
+  0% { transform: translateY(-40vh); opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: translateY(140vh); opacity: 0; }
+}
+html body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 39;
+  height: 24vh;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    oklch(0.86 0.18 96 / 0.04) 40%,
+    oklch(0.86 0.18 96 / 0.09) 50%,
+    oklch(0.86 0.18 96 / 0.04) 60%,
+    transparent 100%);
+  animation: global-scan 14s linear infinite;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+/* Mobile: skip scan beam, keep only static noise for perf */
+@media (max-width: 640px) {
+  html body::after { display: none; }
+}
+html[data-reduce-motion="true"] body::after { display: none; }
+
+/* Global faint data-noise sitting behind everything */
+body {
+  background-image:
+    radial-gradient(oklch(0.68 0.25 25 / 0.03) 1px, transparent 1px),
+    radial-gradient(oklch(0.86 0.18 96 / 0.03) 1px, transparent 1px),
+    radial-gradient(900px 500px at 15% -10%, oklch(0.86 0.18 96 / 0.10), transparent 60%),
+    radial-gradient(700px 400px at 100% 0%, oklch(0.82 0.22 145 / 0.06), transparent 55%),
+    linear-gradient(oklch(1 0 0 / 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(1 0 0 / 0.015) 1px, transparent 1px),
+    var(--gradient-obsidian) !important;
+  background-size: 28px 28px, 36px 36px, auto, auto, 32px 32px, 32px 32px, auto !important;
+  background-position: 0 0, 14px 18px, 0 0, 0 0, 0 0, 0 0, 0 0 !important;
+}
+
+/* ===== Vault dialog styling ===== */
+@keyframes vault-open {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.92); filter: blur(10px) hue-rotate(20deg); clip-path: inset(45% 0 45% 0); }
+  45% { opacity: 1; clip-path: inset(0 0 0 0); filter: blur(0) hue-rotate(0deg); }
+  55% { transform: translate(-51%, -50%) scale(1.01); }
+  70% { transform: translate(-49.5%, -50%) scale(0.995); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+}
+@utility vault-open {
+  animation: vault-open 0.55s var(--ease-smooth) both;
+}
+html[data-reduce-motion="true"] .vault-open { animation: none !important; }
+
+/* ===== Command bar ===== */
+@keyframes caret-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+@utility caret-blink {
+  animation: caret-blink 1.05s steps(1) infinite;
+}
