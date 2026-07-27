@@ -8,6 +8,7 @@ import { useCurrentUser } from "@/lib/useCurrentUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { ReducedMotionToggle, applyReducedMotionFromStorage } from "@/components/ReducedMotionToggle";
 import { useEffect } from "react";
+import { CommandBar } from "@/components/CommandBar";
 
 type NavItem = { to: "/dashboard" | "/inventory" | "/sale" | "/sales" | "/admin/applications" | "/admin/audit"; label: string; icon: typeof Menu; adminOnly?: boolean };
 
@@ -145,6 +146,7 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
         </div>
       </div>
       <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:px-6 sm:py-12">{children}</main>
+      <CommandBar />
     </div>
   );
 }

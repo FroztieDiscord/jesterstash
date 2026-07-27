@@ -7,12 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { VaultDialog } from "@/components/VaultDialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -247,12 +245,13 @@ function InventoryPage() {
                               <div
                                 className="flex shrink-0 gap-0.5 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100"
                                 onClick={(e) => e.stopPropagation()}
+                                onKeyDown={(e) => e.stopPropagation()}
                               >
                                 <Button
                                   variant="ghost"
                                   size="icon"
                                   className="h-7 w-7 rounded-none text-muted-foreground/70 hover:text-primary sm:h-8 sm:w-8"
-                                  onClick={() => { setEditing(p); setOpen(true); }}
+                                  onClick={(e) => { e.stopPropagation(); setEditing(p); setOpen(true); }}
                                   aria-label="Edit"
                                 >
                                   <Pencil className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
@@ -261,7 +260,7 @@ function InventoryPage() {
                                   variant="ghost"
                                   size="icon"
                                   className="h-7 w-7 rounded-none text-muted-foreground/70 hover:text-destructive sm:h-8 sm:w-8"
-                                  onClick={() => { if (confirm(`Delete ${p.name}?`)) store.deleteProduct(p.id); }}
+                                  onClick={(e) => { e.stopPropagation(); if (confirm(`Delete ${p.name}?`)) store.deleteProduct(p.id); }}
                                   aria-label="Delete"
                                 >
                                   <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
@@ -367,10 +366,7 @@ function ProductDialog({
   }
 
   return (
-    <DialogContent className="max-w-md">
-      <DialogHeader>
-        <DialogTitle>{initial ? "Edit Product" : "Add Product"}</DialogTitle>
-      </DialogHeader>
+    <VaultDialog title={initial ? `edit ${initial.name}` : "deploy new asset"} channel={initial ? "vault_03/edit" : "vault_03/deploy"}>
       <form onSubmit={submit} className="grid gap-3">
         <Field label="Name">
           <Input value={name} onChange={(e) => setName(e.target.value)} required />
@@ -416,6 +412,9 @@ function ProductDialog({
         <Field label="Barcode (optional)">
           <Input value={barcode} onChange={(e) => setBarcode(e.target.value)} />
         </Field>
+        <div className="mt-1 rounded-sm border border-primary/20 bg-primary/[0.03] px-3 py-2 font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground/70">
+          <span className="text-success">✓</span> payload verified · signature: 0x{initial?.id.slice(0, 8) ?? "new_asset"}
+        </div>
         <DialogFooter className="mt-2">
           {initial ? (
             <div className="flex w-full gap-2">
@@ -426,16 +425,16 @@ function ProductDialog({
                 onClick={handleDelete}
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                Delete
+                purge
               </Button>
-              <Button type="submit" className="flex-1">Save changes</Button>
+              <Button type="submit" className="flex-1 font-mono uppercase tracking-[0.25em]">commit</Button>
             </div>
           ) : (
-            <Button type="submit" className="w-full">Add product</Button>
+            <Button type="submit" className="w-full font-mono uppercase tracking-[0.25em]">deploy asset</Button>
           )}
         </DialogFooter>
       </form>
-    </DialogContent>
+    </VaultDialog>
   );
 }
 
@@ -449,19 +448,16 @@ function FolderDialog({ initial, onDone }: { initial: Folder | null; onDone: () 
     onDone();
   }
   return (
-    <DialogContent className="max-w-sm">
-      <DialogHeader>
-        <DialogTitle>{initial ? "Rename Folder" : "New Folder"}</DialogTitle>
-      </DialogHeader>
+    <VaultDialog title={initial ? `rename ${initial.name}` : "new dead-drop"} channel="vault_03/folders" className="max-w-sm">
       <form onSubmit={submit} className="grid gap-3">
         <Field label="Folder name">
           <Input value={name} onChange={(e) => setName(e.target.value)} autoFocus required />
         </Field>
         <DialogFooter className="mt-2">
-          <Button type="submit" className="w-full">{initial ? "Save" : "Create"}</Button>
+          <Button type="submit" className="w-full font-mono uppercase tracking-[0.25em]">{initial ? "commit" : "seal"}</Button>
         </DialogFooter>
       </form>
-    </DialogContent>
+    </VaultDialog>
   );
 }
 
