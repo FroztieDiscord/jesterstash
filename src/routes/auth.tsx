@@ -74,7 +74,7 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md space-y-6 rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-card)]">
         <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <div
@@ -139,6 +139,6 @@ function AuthPage() {
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

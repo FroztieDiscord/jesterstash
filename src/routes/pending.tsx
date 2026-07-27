@@ -83,7 +83,7 @@ function PendingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md space-y-6 rounded-3xl border border-border bg-card p-8 text-center shadow-[var(--shadow-card)]">
         <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent">
           <Clock className="h-6 w-6 text-primary" />
@@ -134,6 +134,6 @@ function PendingPage() {
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
