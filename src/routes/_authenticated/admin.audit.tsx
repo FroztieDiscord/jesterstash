@@ -1,10 +1,12 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Loader2, ShieldAlert, RefreshCw, Radio } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Loader2, ShieldAlert, RefreshCw, Radio, Download } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 type AuditEntry = {
@@ -35,6 +37,21 @@ function AuditPage() {
   const [rows, setRows] = useState<AuditEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [live, setLive] = useState(false);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [exporting, setExporting] = useState(false);
+
+  const filteredRows = useMemo(() => {
+    if (!rows) return null;
+    const fromTs = fromDate ? new Date(fromDate + "T00:00:00").getTime() : null;
+    const toTs = toDate ? new Date(toDate + "T23:59:59.999").getTime() : null;
+    return rows.filter((r) => {
+      const t = new Date(r.created_at).getTime();
+      if (fromTs !== null && t < fromTs) return false;
+      if (toTs !== null && t > toTs) return false;
+      return true;
+    });
+  }, [rows, fromDate, toDate]);
 
   async function load() {
     setLoading(true);
@@ -76,6 +93,53 @@ function AuditPage() {
     };
   }, []);
 
+  async function exportCsv() {
+    setExporting(true);
+    try {
+      let query = supabase
+        .from("security_audit_log")
+        .select("id, function_name, actor_id, target_user_id, target_email, action, details, created_at")
+        .order("created_at", { ascending: false });
+      if (fromDate) query = query.gte("created_at", new Date(fromDate + "T00:00:00").toISOString());
+      if (toDate) query = query.lte("created_at", new Date(toDate + "T23:59:59.999").toISOString());
+      const { data, error } = await query;
+      if (error) throw error;
+      const entries = (data ?? []) as AuditEntry[];
+      if (entries.length === 0) {
+        toast.message("Nothing to export", { description: "No audit entries in that range." });
+        return;
+      }
+      const headers = ["created_at", "function_name", "action", "actor_id", "target_user_id", "target_email", "details"];
+      const escape = (v: unknown) => {
+        const s = v === null || v === undefined ? "" : typeof v === "string" ? v : JSON.stringify(v);
+        return `"${s.replace(/"/g, '""')}"`;
+      };
+      const csv = [
+        headers.join(","),
+        ...entries.map((r) =>
+          [r.created_at, r.function_name, r.action, r.actor_id, r.target_user_id, r.target_email, r.details]
+            .map(escape)
+            .join(","),
+        ),
+      ].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const range = `${fromDate || "all"}_${toDate || "now"}`;
+      a.href = url;
+      a.download = `audit-log_${range}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success(`Exported ${entries.length} entr${entries.length === 1 ? "y" : "ies"}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Export failed");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <StockFlowLayout>
       <div className="mx-auto max-w-5xl space-y-6 px-5 py-8">
@@ -103,18 +167,43 @@ function AuditPage() {
           </div>
         </header>
 
+        <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-border/60 bg-card/40 p-4 backdrop-blur-xl">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="audit-from" className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">From</Label>
+            <Input id="audit-from" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="h-9 w-[160px]" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="audit-to" className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">To</Label>
+            <Input id="audit-to" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="h-9 w-[160px]" />
+          </div>
+          {(fromDate || toDate) && (
+            <Button variant="ghost" size="sm" onClick={() => { setFromDate(""); setToDate(""); }} className="h-9">
+              Clear
+            </Button>
+          )}
+          <div className="ml-auto flex items-center gap-3">
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {filteredRows?.length ?? 0} shown
+            </span>
+            <Button size="sm" onClick={exportCsv} disabled={exporting} className="bg-gold text-background hover:bg-gold/90">
+              {exporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+              Export CSV
+            </Button>
+          </div>
+        </div>
+
         <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-xl">
           {rows === null ? (
             <div className="flex items-center justify-center p-12 text-muted-foreground">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading…
             </div>
-          ) : rows.length === 0 ? (
+          ) : filteredRows!.length === 0 ? (
             <div className="p-12 text-center text-sm text-muted-foreground">
-              No audit events recorded yet.
+              No audit events in this range.
             </div>
           ) : (
             <ul className="divide-y divide-border/60">
-              {rows.map((r) => (
+              {filteredRows!.map((r) => (
                 <li key={r.id} className="px-5 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
