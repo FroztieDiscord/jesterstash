@@ -1,6 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Menu, LayoutDashboard, Package, ShoppingCart, Receipt, Users, LogOut, ShieldAlert } from "lucide-react";
+import { Menu, LayoutDashboard, Package, ShoppingCart, Receipt, Users, LogOut, ShieldAlert, Lock, Terminal } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,23 +36,28 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.82 0.14 88 / 0.35), transparent)" }} />
-        <div className="mx-auto flex h-16 max-w-5xl items-center gap-3 px-6">
+      <header className="sticky top-0 z-30 border-b border-primary/20 bg-background/80 backdrop-blur-xl">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.86 0.18 96 / 0.5), transparent)" }} />
+        <div className="mx-auto flex h-14 max-w-5xl items-center gap-2 px-4 sm:h-16 sm:gap-3 sm:px-6">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label="Open menu"
-              className="-ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-foreground/80 transition hover:border-primary/50 hover:text-primary"
+              className="-ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md border border-primary/30 bg-card/60 text-primary/90 transition hover:border-primary hover:bg-primary/10 hover:text-primary active:scale-90"
             >
               <Menu className="h-4 w-4" />
             </SheetTrigger>
-            <SheetContent side="left" className="flex w-80 flex-col border-r border-border/60 bg-background/95 p-0 backdrop-blur-xl">
-              <SheetHeader className="border-b border-border/60 p-6">
-                <SheetTitle className="text-left text-2xl font-normal tracking-wide text-gold font-display">Jester&#39;s Stash</SheetTitle>
+            <SheetContent side="left" className="flex w-[85vw] max-w-[20rem] flex-col border-r border-primary/25 bg-background/95 p-0 backdrop-blur-xl">
+              <SheetHeader className="border-b border-primary/20 p-5">
+                <SheetTitle className="text-left font-mono text-xl font-bold uppercase tracking-[0.15em] text-primary">
+                  <span className="text-primary/60">./</span>jester_stash
+                </SheetTitle>
+                <div className="text-left font-mono text-[10px] uppercase tracking-[0.3em] text-success">
+                  <span className="encrypted-badge">Encrypted</span>
+                </div>
                 {user?.email && (
-                  <div className="text-left text-xs tracking-wide text-muted-foreground">
-                    {user.email}
-                    {isAdmin && <span className="ml-2 rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-primary">Admin</span>}
+                  <div className="mt-1 text-left font-mono text-[11px] tracking-wide text-muted-foreground">
+                    <span className="text-success">$</span> {user.email}
+                    {isAdmin && <span className="ml-2 rounded-sm border border-primary/50 bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary">ROOT</span>}
                   </div>
                 )}
               </SheetHeader>
@@ -66,42 +71,49 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
                       to={item.to}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium tracking-wide transition-all",
+                        "group relative flex items-center gap-3 rounded-md px-3 py-2.5 font-mono text-[13px] uppercase tracking-[0.12em] transition-all",
                         active
                           ? "bg-primary/10 text-primary shadow-[inset_0_1px_0_0_oklch(1_0_0_/_0.05)]"
-                          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                          : "text-muted-foreground hover:bg-primary/5 hover:text-primary",
                       )}
                     >
-                      {active && <span className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-gold" />}
-                      <Icon className="h-4 w-4" />
-                      {item.label}
+                      {active && <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-primary shadow-[0_0_10px_oklch(0.86_0.18_96_/_0.9)]" />}
+                      <Icon className="h-3.5 w-3.5" />
+                      <span>{active ? <span className="text-primary/70">&gt; </span> : null}{item.label}</span>
                     </Link>
                   );
                 })}
               </nav>
-              <div className="border-t border-border/60 p-3">
+              <div className="border-t border-primary/20 p-3">
                 <button
                   type="button"
                   onClick={handleSignOut}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium tracking-wide text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                  className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 font-mono text-[13px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                 >
-                  <LogOut className="h-4 w-4" />
-                  Sign out
+                  <LogOut className="h-3.5 w-3.5" />
+                  Disconnect
                 </button>
               </div>
             </SheetContent>
           </Sheet>
-          <Link to="/dashboard" className="flex flex-col leading-none">
-            <span className="font-display text-xl font-normal tracking-tight text-gold">Jester&rsquo;s Stash</span>
-            <span className="mt-1 text-[9px] font-medium uppercase tracking-[0.35em] text-muted-foreground/70">Vol. III</span>
+          <Link to="/dashboard" className="flex min-w-0 flex-col leading-none hover-glitch">
+            <span className="font-mono text-base font-bold uppercase tracking-[0.15em] text-primary sm:text-lg">
+              <span className="text-primary/50">./</span>jester_stash
+            </span>
+            <span className="mt-1 flex items-center gap-1.5 font-mono text-[9px] font-medium uppercase tracking-[0.3em] text-success/80">
+              <Lock className="h-2.5 w-2.5" /> aes-256 · node-01
+            </span>
           </Link>
-          <div className="ml-auto hidden text-right sm:block">
-            <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60">Terminal 01</div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-primary/70">System Active</div>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="hidden sm:inline-flex encrypted-badge">Secure</span>
+            <span className="inline-flex items-center gap-1.5 rounded-sm border border-success/40 bg-success/10 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-success">
+              <Terminal className="h-2.5 w-2.5" />
+              <span className="hidden xs:inline sm:inline">LIVE</span>
+            </span>
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-14 pb-24">{children}</main>
+      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:px-6 sm:py-12">{children}</main>
     </div>
   );
 }
