@@ -1,13 +1,13 @@
 import { type ReactNode, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Menu, LayoutDashboard, Package, ShoppingCart, Receipt, Users, LogOut } from "lucide-react";
+import { Menu, LayoutDashboard, Package, ShoppingCart, Receipt, Users, LogOut, ShieldAlert } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/lib/useCurrentUser";
 import { useQueryClient } from "@tanstack/react-query";
 
-type NavItem = { to: "/dashboard" | "/inventory" | "/sale" | "/sales" | "/admin/applications"; label: string; icon: typeof Menu; adminOnly?: boolean };
+type NavItem = { to: "/dashboard" | "/inventory" | "/sale" | "/sales" | "/admin/applications" | "/admin/audit"; label: string; icon: typeof Menu; adminOnly?: boolean };
 
 const nav: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -15,6 +15,7 @@ const nav: NavItem[] = [
   { to: "/sale", label: "Record Sale", icon: ShoppingCart },
   { to: "/sales", label: "Sales History", icon: Receipt },
   { to: "/admin/applications", label: "Team Applications", icon: Users, adminOnly: true },
+  { to: "/admin/audit", label: "Audit Log", icon: ShieldAlert, adminOnly: true },
 ];
 
 export function StockFlowLayout({ children }: { children: ReactNode }) {
