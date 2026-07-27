@@ -50,7 +50,7 @@ function Dashboard() {
               {formatCurrency(monthTotal)}
             </h1>
             <span className="font-display text-sm italic text-primary/80">
-              {salesMonth.length} transactions
+              &nbsp;· {salesMonth.length} transactions
             </span>
           </div>
         </div>
