@@ -37,14 +37,14 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.82 0.14 88 / 0.5), transparent)" }} />
-        <div className="mx-auto flex h-16 max-w-5xl items-center gap-3 px-5">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.82 0.14 88 / 0.35), transparent)" }} />
+        <div className="mx-auto flex h-16 max-w-5xl items-center gap-3 px-6">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label="Open menu"
-              className="-ml-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 text-foreground/90 transition hover:border-primary/50 hover:text-primary"
+              className="-ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-foreground/80 transition hover:border-primary/50 hover:text-primary"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-4 w-4" />
             </SheetTrigger>
             <SheetContent side="left" className="flex w-80 flex-col border-r border-border/60 bg-background/95 p-0 backdrop-blur-xl">
               <SheetHeader className="border-b border-border/60 p-6">
@@ -91,13 +91,17 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
               </div>
             </SheetContent>
           </Sheet>
-          <Link to="/dashboard" className="flex items-baseline gap-2">
-            <span className="font-display text-2xl font-normal leading-none tracking-wide text-gold">Jester&rsquo;s Stash</span>
-            <span className="hidden text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground sm:inline">Premium</span>
+          <Link to="/dashboard" className="flex flex-col leading-none">
+            <span className="font-display text-xl font-normal tracking-tight text-gold">Jester&rsquo;s Stash</span>
+            <span className="mt-1 text-[9px] font-medium uppercase tracking-[0.35em] text-muted-foreground/70">Vol. III</span>
           </Link>
+          <div className="ml-auto hidden text-right sm:block">
+            <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60">Terminal 01</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-primary/70">System Active</div>
+          </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-5 py-8 pb-24">{children}</main>
+      <main className="mx-auto max-w-5xl px-6 py-14 pb-24">{children}</main>
     </div>
   );
 }
