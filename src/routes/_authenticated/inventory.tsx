@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Package, Plus, Search, Trash2, Pencil, Infinity as InfinityIcon, FolderPlus, ChevronDown, ChevronRight, FolderOpen } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, store, formatCurrency, type Product, type Folder } from "@/lib/stockflow-store";
@@ -37,6 +37,16 @@ function InventoryPage() {
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const dirtyRef = useRef(false);
+
+  function tryClose(next: boolean) {
+    if (!next && dirtyRef.current) {
+      if (!confirm("Discard unsaved changes?")) return;
+    }
+    dirtyRef.current = false;
+    setOpen(next);
+    if (!next) setEditing(null);
+  }
 
   const folderName = useMemo(() => {
     const m = new Map<string, string>();
@@ -82,13 +92,7 @@ function InventoryPage() {
             <FolderPlus className="h-3 w-3" />
             <span className="hidden sm:inline">New Folder</span>
           </Button>
-          <Dialog
-          open={open}
-          onOpenChange={(o) => {
-            setOpen(o);
-            if (!o) setEditing(null);
-          }}
-        >
+        <Dialog open={open} onOpenChange={tryClose}>
           <DialogTrigger asChild>
             <Button size="sm" variant="outline" className="gap-2 rounded-none border-primary/30 bg-transparent px-3 py-2 text-[10px] uppercase tracking-[0.3em] text-primary hover:bg-primary hover:text-primary-foreground">
               <Plus className="h-3 w-3" />
@@ -100,7 +104,9 @@ function InventoryPage() {
             key={editing?.id ?? "new"}
             initial={editing}
             folders={folders}
+            dirtyRef={dirtyRef}
             onDone={() => {
+              dirtyRef.current = false;
               setOpen(false);
               setEditing(null);
             }}
