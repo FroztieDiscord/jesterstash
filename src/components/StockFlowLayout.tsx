@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/lib/useCurrentUser";
 import { useQueryClient } from "@tanstack/react-query";
+import { ReducedMotionToggle, applyReducedMotionFromStorage } from "@/components/ReducedMotionToggle";
+import { useEffect } from "react";
 
 type NavItem = { to: "/dashboard" | "/inventory" | "/sale" | "/sales" | "/admin/applications" | "/admin/audit"; label: string; icon: typeof Menu; adminOnly?: boolean };
 
@@ -24,6 +26,8 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user, isAdmin } = useCurrentUser();
+
+  useEffect(() => { applyReducedMotionFromStorage(); }, []);
 
   const items = nav.filter((n) => !n.adminOnly || isAdmin);
 
@@ -85,6 +89,9 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
                 })}
               </nav>
               <div className="border-t border-primary/20 p-3">
+                <div className="mb-2">
+                  <ReducedMotionToggle />
+                </div>
                 <button
                   type="button"
                   onClick={handleSignOut}
