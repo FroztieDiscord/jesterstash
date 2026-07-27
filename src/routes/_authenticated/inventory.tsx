@@ -201,7 +201,17 @@ function InventoryPage() {
                           return (
                             <li
                               key={p.id}
-                              className="group grid grid-cols-[44px_1fr_auto_auto] items-center gap-2.5 border-b border-border/30 py-3 last:border-b-0 sm:grid-cols-[56px_1fr_auto_auto_auto] sm:gap-4 sm:py-4"
+                              className="group grid cursor-pointer grid-cols-[44px_1fr_auto_auto] items-center gap-2.5 border-b border-border/30 py-3 transition-colors last:border-b-0 hover:bg-muted/10 sm:grid-cols-[56px_1fr_auto_auto_auto] sm:gap-4 sm:py-4"
+                              onClick={() => { setEditing(p); setOpen(true); }}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  setEditing(p);
+                                  setOpen(true);
+                                }
+                              }}
                             >
                               <div className="flex h-11 w-11 items-center justify-center overflow-hidden border border-border/40 bg-muted/20 sm:h-14 sm:w-14">
                                 {p.image ? (
@@ -228,7 +238,10 @@ function InventoryPage() {
                               </div>
                               <div className="w-14 text-right font-display text-sm font-light tabular-nums sm:w-20">{formatCurrency(p.price)}</div>
                               <div className="hidden w-24 sm:block" />
-                              <div className="flex shrink-0 gap-0.5 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
+                              <div
+                                className="flex shrink-0 gap-0.5 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100"
+                                onClick={(e) => e.stopPropagation()}
+                              >
                                 <Button
                                   variant="ghost"
                                   size="icon"
