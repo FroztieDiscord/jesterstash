@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Package, Plus, Search, Trash2, Pencil, Infinity as InfinityIcon, FolderPlus, ChevronDown, ChevronRight, FolderOpen } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { useStore, store, formatCurrency, type Product, type Folder } from "@/lib/stockflow-store";
@@ -37,6 +37,16 @@ function InventoryPage() {
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const dirtyRef = useRef(false);
+
+  function tryClose(next: boolean) {
+    if (!next && dirtyRef.current) {
+      if (!confirm("Discard unsaved changes?")) return;
+    }
+    dirtyRef.current = false;
+    setOpen(next);
+    if (!next) setEditing(null);
+  }
 
   const folderName = useMemo(() => {
     const m = new Map<string, string>();
@@ -82,13 +92,7 @@ function InventoryPage() {
             <FolderPlus className="h-3 w-3" />
             <span className="hidden sm:inline">New Folder</span>
           </Button>
-          <Dialog
-          open={open}
-          onOpenChange={(o) => {
-            setOpen(o);
-            if (!o) setEditing(null);
-          }}
-        >
+        <Dialog open={open} onOpenChange={tryClose}>
           <DialogTrigger asChild>
             <Button size="sm" variant="outline" className="gap-2 rounded-none border-primary/30 bg-transparent px-3 py-2 text-[10px] uppercase tracking-[0.3em] text-primary hover:bg-primary hover:text-primary-foreground">
               <Plus className="h-3 w-3" />
@@ -100,7 +104,9 @@ function InventoryPage() {
             key={editing?.id ?? "new"}
             initial={editing}
             folders={folders}
+            dirtyRef={dirtyRef}
             onDone={() => {
+              dirtyRef.current = false;
               setOpen(false);
               setEditing(null);
             }}
@@ -283,10 +289,12 @@ function InventoryPage() {
 function ProductDialog({
   initial,
   folders,
+  dirtyRef,
   onDone,
 }: {
   initial: Product | null;
   folders: Folder[];
+  dirtyRef: React.MutableRefObject<boolean>;
   onDone: () => void;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
@@ -298,6 +306,41 @@ function ProductDialog({
   const [barcode, setBarcode] = useState(initial?.barcode ?? "");
   const [unlimited, setUnlimited] = useState<boolean>(initial?.unlimited ?? false);
   const [image, setImage] = useState(initial?.image ?? "");
+
+  const snapshot = useRef({
+    name: initial?.name ?? "",
+    folderId: initial?.folderId ?? folders[0]?.id ?? "",
+    price: String(initial?.price ?? ""),
+    cost: String(initial?.cost ?? ""),
+    stock: String(initial?.stock ?? ""),
+    threshold: String(initial?.lowStockThreshold ?? 5),
+    barcode: initial?.barcode ?? "",
+    unlimited: initial?.unlimited ?? false,
+    image: initial?.image ?? "",
+  });
+
+  useEffect(() => {
+    const s = snapshot.current;
+    dirtyRef.current =
+      name !== s.name ||
+      folderId !== s.folderId ||
+      price !== s.price ||
+      cost !== s.cost ||
+      stock !== s.stock ||
+      threshold !== s.threshold ||
+      barcode !== s.barcode ||
+      unlimited !== s.unlimited ||
+      image !== s.image;
+  }, [name, folderId, price, cost, stock, threshold, barcode, unlimited, image, dirtyRef]);
+
+  function handleDelete() {
+    if (!initial) return;
+    if (confirm(`Delete ${initial.name}? This cannot be undone.`)) {
+      store.deleteProduct(initial.id);
+      dirtyRef.current = false;
+      onDone();
+    }
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -374,9 +417,22 @@ function ProductDialog({
           <Input value={barcode} onChange={(e) => setBarcode(e.target.value)} />
         </Field>
         <DialogFooter className="mt-2">
-          <Button type="submit" className="w-full">
-            {initial ? "Save changes" : "Add product"}
-          </Button>
+          {initial ? (
+            <div className="flex w-full gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="gap-2 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={handleDelete}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </Button>
+              <Button type="submit" className="flex-1">Save changes</Button>
+            </div>
+          ) : (
+            <Button type="submit" className="w-full">Add product</Button>
+          )}
         </DialogFooter>
       </form>
     </DialogContent>
