@@ -24,7 +24,7 @@ const EXPECTED = {
       "no client updates on applications",
       "no client deletes on applications",
     ],
-    adminSelectPolicy: /has_role\(\s*auth\.uid\(\)\s*,\s*'admin'::app_role\s*\)/i,
+    adminSelectPolicy: /has_role\(\s*auth\.uid\(\)\s*,\s*'admin'(?:::app_role)?\s*\)/i,
   },
   user_roles: {
     writePolicies: [
@@ -32,7 +32,7 @@ const EXPECTED = {
       "no client updates on roles",
       "no client deletes on roles",
     ],
-    adminSelectPolicy: /has_role\(\s*auth\.uid\(\)\s*,\s*'admin'::app_role\s*\)/i,
+    adminSelectPolicy: /has_role\(\s*auth\.uid\(\)\s*,\s*'admin'(?:::app_role)?\s*\)/i,
   },
 };
 
