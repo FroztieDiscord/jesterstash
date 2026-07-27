@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Loader2, ShieldAlert, RefreshCw } from "lucide-react";
+import { Loader2, ShieldAlert, RefreshCw, Radio } from "lucide-react";
 import { StockFlowLayout } from "@/components/StockFlowLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ export const Route = createFileRoute("/_authenticated/admin/audit")({
 function AuditPage() {
   const [rows, setRows] = useState<AuditEntry[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [live, setLive] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -54,6 +55,27 @@ function AuditPage() {
     void load();
   }, []);
 
+  useEffect(() => {
+    const channel = supabase
+      .channel("security_audit_log_stream")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "security_audit_log" },
+        (payload) => {
+          const row = payload.new as AuditEntry;
+          setRows((prev) => {
+            const next = prev ? [row, ...prev.filter((r) => r.id !== row.id)] : [row];
+            return next.slice(0, 500);
+          });
+          toast.message("New audit event", { description: `${row.function_name} · ${row.action}` });
+        },
+      )
+      .subscribe((status) => setLive(status === "SUBSCRIBED"));
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, []);
+
   return (
     <StockFlowLayout>
       <div className="mx-auto max-w-5xl space-y-6 px-5 py-8">
@@ -69,10 +91,16 @@ function AuditPage() {
               assignments is recorded here. Entries cannot be edited or deleted from the app.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={load} disabled={loading} className="shrink-0">
-            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
-            Refresh
-          </Button>
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+              <Radio className={`h-3 w-3 ${live ? "text-gold animate-pulse" : "text-muted-foreground/50"}`} />
+              {live ? "Live" : "Offline"}
+            </span>
+            <Button variant="outline" size="sm" onClick={load} disabled={loading}>
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+              Refresh
+            </Button>
+          </div>
         </header>
 
         <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-xl">
