@@ -115,6 +115,19 @@ function ApplicationsPage() {
     }
   }
 
+  async function resend(email: string) {
+    setBusyId("resend:" + email);
+    try {
+      const res = await inviteMember({ data: { email } });
+      setLastInvite({ email: res.email, url: res.inviteUrl });
+      toast.success(`New sign-in link ready for ${email}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   async function copyLink() {
     if (!lastInvite?.url) return;
     try {
@@ -249,14 +262,28 @@ function ApplicationsPage() {
                     Added {a.decided_at ? new Date(a.decided_at).toLocaleString() : ""}
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => revoke(a.email)}
-                  disabled={busyId === a.email}
-                >
-                  {busyId === a.email ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Revoke"}
-                </Button>
+                <div className="flex shrink-0 gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => resend(a.email)}
+                    disabled={busyId === "resend:" + a.email}
+                  >
+                    {busyId === "resend:" + a.email ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      "Resend link"
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => revoke(a.email)}
+                    disabled={busyId === a.email}
+                  >
+                    {busyId === a.email ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Revoke"}
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
