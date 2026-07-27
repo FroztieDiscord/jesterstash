@@ -83,11 +83,11 @@
   --secondary-foreground: oklch(0.94 0.005 95);
   --muted: oklch(0.12 0.005 260);
   --muted-foreground: oklch(0.6 0.01 130);
-  --accent: oklch(0.16 0.02 145);
-  --accent-foreground: oklch(0.86 0.2 140);
-  --success: oklch(0.82 0.22 145); /* terminal green */
-  --success-foreground: oklch(0.08 0.02 145);
-  --success-soft: oklch(0.18 0.06 145);
+  --accent: oklch(0.18 0.06 25);
+  --accent-foreground: oklch(0.72 0.24 25);
+  --success: oklch(0.68 0.25 25); /* alert red (was terminal green) */
+  --success-foreground: oklch(0.98 0 0);
+  --success-soft: oklch(0.2 0.08 25);
   --warning: oklch(0.86 0.18 96);
   --warning-foreground: oklch(0.1 0.02 96);
   --destructive: oklch(0.65 0.25 25);
@@ -96,7 +96,7 @@
   --input: oklch(0.12 0.005 260);
   --ring: oklch(0.86 0.18 96);
   --neon-1: oklch(0.86 0.18 96);
-  --neon-2: oklch(0.82 0.22 145);
+  --neon-2: oklch(0.68 0.25 25);
   --neon-3: oklch(0.65 0.25 25);
   --gradient-gold: linear-gradient(135deg, oklch(0.7 0.16 96) 0%, oklch(0.92 0.19 98) 50%, oklch(0.75 0.18 92) 100%);
   --gradient-primary: linear-gradient(135deg, oklch(0.08 0.005 260) 0%, oklch(0.16 0.03 260) 60%, oklch(0.86 0.18 96) 100%);
