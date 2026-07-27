@@ -374,8 +374,8 @@
 }
 
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(0.82 0.14 88 / 0.45); }
-  70% { box-shadow: 0 0 0 12px oklch(0.82 0.14 88 / 0); }
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.86 0.18 96 / 0.5); }
+  70% { box-shadow: 0 0 0 14px oklch(0.86 0.18 96 / 0); }
 }
 
 @utility shimmer {
