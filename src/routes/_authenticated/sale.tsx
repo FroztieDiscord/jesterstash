@@ -82,41 +82,49 @@ function SalePage() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      <ul className="border-t border-border/40">
         {list.map((p) => {
           const out = !p.unlimited && p.stock <= 0;
           return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => add(p.id)}
-              disabled={out}
-              className="group overflow-hidden border border-border/40 bg-card/30 text-left transition disabled:opacity-40 enabled:hover:border-primary/50 enabled:active:scale-[0.99]"
-            >
-              <div className="flex aspect-square items-center justify-center overflow-hidden bg-muted/30">
-                {p.image ? (
-                  <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
-                ) : (
-                  <Package className="h-10 w-10 text-muted-foreground/50" />
-                )}
-              </div>
-              <div className="p-4">
-                <div className="truncate font-display text-sm text-foreground/90">{p.name}</div>
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="font-display text-sm font-light tabular-nums">{formatCurrency(p.price)}</span>
-                  {p.unlimited ? (
-                    <InfinityIcon className="h-3.5 w-3.5 text-primary/70" />
+            <li key={p.id} className="border-b border-border/40">
+              <button
+                type="button"
+                onClick={() => add(p.id)}
+                disabled={out}
+                className="grid w-full grid-cols-[64px_1fr_auto_auto] items-center gap-5 py-5 text-left transition disabled:opacity-40 enabled:hover:bg-muted/10 enabled:active:scale-[0.998]"
+              >
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-border/40 bg-muted/20">
+                  {p.image ? (
+                    <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
                   ) : (
-                    <span className={"text-[10px] uppercase tracking-widest " + (out ? "text-destructive/70" : "text-muted-foreground/60")}>
-                      {out ? "Depleted" : `${p.stock}`}
-                    </span>
+                    <Package className="h-5 w-5 text-muted-foreground/40" />
                   )}
                 </div>
-              </div>
-            </button>
+                <div className="min-w-0">
+                  <div className="truncate font-display text-base text-foreground/90">{p.name}</div>
+                  <div className="mt-0.5 text-[10px] uppercase tracking-[0.25em] text-muted-foreground/60">{p.category}</div>
+                </div>
+                <div className="w-20 text-right font-display text-sm font-light tabular-nums">{formatCurrency(p.price)}</div>
+                <div className="flex w-24 items-center justify-end gap-1.5 text-[10px] uppercase tracking-[0.2em]">
+                  {p.unlimited ? (
+                    <>
+                      <InfinityIcon className="h-3.5 w-3.5 text-primary/80" />
+                      <span className="text-primary/70">Unlimited</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className={"h-1.5 w-1.5 rounded-full " + (out ? "bg-destructive/70" : "bg-primary")} />
+                      <span className={out ? "text-destructive/70" : "text-muted-foreground/80 tabular-nums"}>
+                        {out ? "Depleted" : p.stock}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </button>
+            </li>
           );
         })}
-      </div>
+      </ul>
 
       <section className="mt-10 border border-primary/20 bg-card/30 p-8">
         <div className="mb-6 flex items-baseline justify-between">
