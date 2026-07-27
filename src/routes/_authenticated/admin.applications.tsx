@@ -12,6 +12,7 @@ import {
   denyApplication,
   inviteMember,
   revokeMember,
+  setTempPassword,
 } from "@/lib/applications.functions";
 import { toast } from "sonner";
 
@@ -38,6 +39,7 @@ function ApplicationsPage() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviting, setInviting] = useState(false);
   const [lastInvite, setLastInvite] = useState<{ email: string; url: string | null } | null>(null);
+  const [lastTempPassword, setLastTempPassword] = useState<{ email: string; password: string } | null>(null);
 
   async function reload() {
     const { data, error } = await supabase
@@ -125,6 +127,29 @@ function ApplicationsPage() {
       toast.error(err instanceof Error ? err.message : "Failed");
     } finally {
       setBusyId(null);
+    }
+  }
+
+  async function tempPassword(email: string) {
+    setBusyId("pwd:" + email);
+    try {
+      const res = await setTempPassword({ data: { email } });
+      setLastTempPassword(res);
+      toast.success(`Temporary password set for ${email}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function copyPassword() {
+    if (!lastTempPassword) return;
+    try {
+      await navigator.clipboard.writeText(lastTempPassword.password);
+      toast.success("Password copied");
+    } catch {
+      toast.error("Copy failed");
     }
   }
 
@@ -278,6 +303,18 @@ function ApplicationsPage() {
                   <Button
                     size="sm"
                     variant="outline"
+                    onClick={() => tempPassword(a.email)}
+                    disabled={busyId === "pwd:" + a.email}
+                  >
+                    {busyId === "pwd:" + a.email ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      "Set temp password"
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => revoke(a.email)}
                     disabled={busyId === a.email}
                   >
@@ -289,6 +326,25 @@ function ApplicationsPage() {
           </ul>
         )}
       </section>
+
+      {lastTempPassword && (
+        <section className="mt-4 rounded-2xl border border-dashed border-primary/40 bg-primary/5 p-5">
+          <div className="mb-1 flex items-center gap-2 font-medium">
+            <ShieldCheck className="h-4 w-4 text-primary" /> Temporary password for {lastTempPassword.email}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Share this with them privately. They sign in with their email + this password, then can change it from their profile.
+          </p>
+          <div className="mt-2 flex items-center gap-2">
+            <code className="flex-1 truncate rounded bg-background px-2 py-1 text-sm">
+              {lastTempPassword.password}
+            </code>
+            <Button size="sm" variant="outline" onClick={copyPassword}>
+              <Copy className="mr-1 h-3.5 w-3.5" /> Copy
+            </Button>
+          </div>
+        </section>
+      )}
 
       {denied.length > 0 && (
         <section className="mt-4 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
