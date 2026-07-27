@@ -219,6 +219,36 @@
   }
 }
 
+/* Respect user's OS-level reduced motion setting AND the in-app toggle
+   (data-reduce-motion="true" on <html>). Disables keyframes, transforms,
+   and transitions across the whole app. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  body::before { display: none !important; }
+}
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+html[data-reduce-motion="true"] body::before { display: none; }
+html[data-reduce-motion="true"] .page-transition,
+html[data-reduce-motion="true"] .animate-fade-up,
+html[data-reduce-motion="true"] .animate-pop-in,
+html[data-reduce-motion="true"] .animate-flicker,
+html[data-reduce-motion="true"] .animate-glitch,
+html[data-reduce-motion="true"] .animate-float,
+html[data-reduce-motion="true"] .shimmer,
+html[data-reduce-motion="true"] .pulse-gold { animation: none !important; }
+
 @keyframes fade-up {
   0% { opacity: 0; transform: translateY(12px) scale(0.98); }
   100% { opacity: 1; transform: translateY(0) scale(1); }

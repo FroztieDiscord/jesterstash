@@ -99,15 +99,15 @@ function Dashboard() {
               </span>
               <span className="text-[10px] uppercase tracking-[0.3em] text-primary/90">Live · This Month</span>
             </div>
-            <span className="hidden items-center gap-1.5 rounded-full border border-primary/30 bg-background/30 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-primary/80 backdrop-blur sm:inline-flex">
-              <Sparkles className="h-3 w-3" /> Vol. III
+            <span className="hidden items-center gap-1.5 rounded-sm border border-success/40 bg-success/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-success sm:inline-flex">
+              <Sparkles className="h-3 w-3" /> node_01
             </span>
           </div>
 
-          <div>
-            <h1 className="text-[10px] uppercase tracking-[0.35em] text-primary/70">Monthly Revenue</h1>
-            <div className="mt-3 flex flex-wrap items-baseline gap-4">
-              <p className="font-display text-7xl font-light tracking-tight text-foreground drop-shadow-[0_2px_20px_oklch(0.82_0.14_88_/_0.35)] sm:text-8xl">
+          <div className="min-w-0">
+            <h1 className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary/70">$ monthly_revenue --live</h1>
+            <div className="mt-3 flex flex-wrap items-baseline gap-3 sm:gap-4">
+              <p className="font-mono text-4xl font-bold tracking-tight text-foreground drop-shadow-[0_2px_20px_oklch(0.86_0.18_96_/_0.35)] sm:text-6xl md:text-7xl">
                 {formatCurrency(monthTotal)}
               </p>
               <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-background/40 px-3 py-1 text-xs font-medium text-primary backdrop-blur">
