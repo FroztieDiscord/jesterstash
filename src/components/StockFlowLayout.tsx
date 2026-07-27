@@ -108,7 +108,7 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
             <span className="hidden sm:inline-flex encrypted-badge">Secure</span>
             <span className="inline-flex items-center gap-1.5 rounded-sm border border-success/40 bg-success/10 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-success">
               <Terminal className="h-2.5 w-2.5" />
-              <span className="hidden xs:inline sm:inline">LIVE</span>
+              <span>LIVE</span>
             </span>
           </div>
         </div>
