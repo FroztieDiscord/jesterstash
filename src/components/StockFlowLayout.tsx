@@ -120,6 +120,30 @@ export function StockFlowLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </header>
+      <div aria-hidden className="ticker border-b border-primary/15 bg-background/60 py-1.5 font-mono text-[10px] uppercase tracking-[0.25em] text-primary/70">
+        <div>
+          {Array.from({ length: 2 }).map((_, r) => (
+            <span key={r} className="inline-flex items-center gap-3">
+              <span className="text-success">●</span> uplink secure
+              <span className="text-primary/40">//</span>
+              tls 1.3 · aes-256-gcm
+              <span className="text-primary/40">//</span>
+              <span className="text-success">●</span> node_01 online
+              <span className="text-primary/40">//</span>
+              hash 0x{Math.random().toString(16).slice(2, 10)}
+              <span className="text-primary/40">//</span>
+              <span className="text-destructive">◆</span> intruder shield: armed
+              <span className="text-primary/40">//</span>
+              blackline established
+              <span className="text-primary/40">//</span>
+              <span className="text-success">●</span> vault sealed
+              <span className="text-primary/40">//</span>
+              access: root only
+              <span className="text-primary/40">//</span>
+            </span>
+          ))}
+        </div>
+      </div>
       <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:px-6 sm:py-12">{children}</main>
     </div>
   );
