@@ -478,3 +478,115 @@ html[data-reduce-motion="true"] .pulse-gold { animation: none !important; }
     pointer-events: none;
   }
 }
+
+/* ============ HACKER / BLACK-MARKET UPGRADES ============ */
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes noise-shift {
+  0%, 100% { background-position: 0 0; }
+  50% { background-position: 32px 32px; }
+}
+@keyframes vault-scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+@keyframes text-decrypt {
+  0% { filter: blur(6px); opacity: 0.3; letter-spacing: 0.4em; }
+  100% { filter: blur(0); opacity: 1; letter-spacing: normal; }
+}
+
+@utility animate-decrypt {
+  animation: text-decrypt 0.9s var(--ease-smooth) both;
+}
+
+@utility ticker {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  & > div {
+    display: inline-flex;
+    animation: ticker-scroll 60s linear infinite;
+    gap: 3rem;
+    padding-right: 3rem;
+  }
+}
+html[data-reduce-motion="true"] .ticker > div { animation: none !important; }
+
+/* Targeting corner brackets — wraps any element in luxury/tactical corners */
+@utility corners {
+  position: relative;
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: oklch(0.86 0.18 96 / 0.7);
+    pointer-events: none;
+  }
+  &::before {
+    top: -1px; left: -1px;
+    border-top: 1px solid; border-left: 1px solid;
+  }
+  &::after {
+    bottom: -1px; right: -1px;
+    border-bottom: 1px solid; border-right: 1px solid;
+  }
+}
+
+/* Blood-neon variant for danger/premium accents */
+@utility corners-red {
+  position: relative;
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: oklch(0.68 0.25 25 / 0.8);
+    pointer-events: none;
+  }
+  &::before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+  &::after { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+}
+
+/* Vault-style scan beam that sweeps a container top→bottom */
+@utility vault-beam {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent, oklch(0.86 0.18 96 / 0.14), transparent);
+    height: 40%;
+    animation: vault-scan 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+html[data-reduce-motion="true"] .vault-beam::after { display: none; }
+
+/* Hacker text — mono, wide-tracked, with a leading > */
+@utility hacker-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: oklch(0.86 0.18 96 / 0.75);
+  &::before {
+    content: "> ";
+    color: oklch(0.68 0.25 25);
+  }
+}
+
+/* Binary/data noise backdrop */
+@utility data-noise {
+  background-image:
+    radial-gradient(oklch(0.68 0.25 25 / 0.08) 1px, transparent 1px),
+    radial-gradient(oklch(0.86 0.18 96 / 0.06) 1px, transparent 1px);
+  background-size: 24px 24px, 32px 32px;
+  background-position: 0 0, 12px 16px;
+}
