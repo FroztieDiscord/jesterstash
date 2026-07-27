@@ -85,10 +85,13 @@ function Dashboard() {
   return (
     <StockFlowLayout>
       {/* Hero */}
-      <section className="animate-fade-up relative isolate overflow-hidden rounded-3xl border border-primary/25 p-8 sm:p-12" style={{ background: "var(--gradient-royal)", boxShadow: "var(--shadow-primary)" }}>
+      <section className="corners vault-beam data-noise animate-fade-up relative isolate overflow-hidden rounded-3xl border border-primary/25 p-8 sm:p-12" style={{ background: "var(--gradient-royal)", boxShadow: "var(--shadow-primary)" }}>
         <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full opacity-40 blur-3xl animate-float" style={{ background: "radial-gradient(circle, oklch(0.88 0.14 90 / 0.55), transparent 65%)" }} />
         <div className="pointer-events-none absolute -bottom-32 -left-16 h-72 w-72 rounded-full opacity-30 blur-3xl" style={{ background: "radial-gradient(circle, oklch(0.5 0.22 28 / 0.65), transparent 65%)" }} />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.88 0.14 90 / 0.7), transparent)" }} />
+        <div className="pointer-events-none absolute right-4 top-4 hidden font-mono text-[9px] uppercase tracking-[0.3em] text-primary/50 sm:block">
+          [ vault_03 // classified ]
+        </div>
 
         <div className="relative flex flex-col gap-6">
           <div className="flex items-center justify-between">
@@ -97,23 +100,26 @@ function Dashboard() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-primary/90">Live · This Month</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary/90">Live · Ledger Sync</span>
             </div>
             <span className="hidden items-center gap-1.5 rounded-sm border border-success/40 bg-success/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-success sm:inline-flex">
-              <Sparkles className="h-3 w-3" /> node_01
+              <Sparkles className="h-3 w-3" /> handler: root
             </span>
           </div>
 
           <div className="min-w-0">
-            <h1 className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary/70">$ monthly_revenue --live</h1>
+            <h1 className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary/70 terminal-caret">$ ./decrypt --stream monthly_revenue</h1>
             <div className="mt-3 flex flex-wrap items-baseline gap-3 sm:gap-4">
-              <p className="font-mono text-4xl font-bold tracking-tight text-foreground drop-shadow-[0_2px_20px_oklch(0.86_0.18_96_/_0.35)] sm:text-6xl md:text-7xl">
+              <p className="animate-decrypt font-mono text-4xl font-bold tracking-tight text-foreground drop-shadow-[0_2px_20px_oklch(0.86_0.18_96_/_0.35)] sm:text-6xl md:text-7xl">
                 {formatCurrency(monthTotal)}
               </p>
               <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-background/40 px-3 py-1 text-xs font-medium text-primary backdrop-blur">
                 <TrendingUp className="h-3 w-3" /> {salesMonth.length} txns
               </span>
             </div>
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.25em] text-primary/50">
+              &gt; channel authenticated · payload verified · <span className="text-success">200_ok</span>
+            </p>
           </div>
 
           {/* Sparkline */}
