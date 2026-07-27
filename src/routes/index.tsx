@@ -4,6 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Jester's Stash — Private Inventory & Sales Management" },
+      { name: "description", content: "Invite-only inventory and sales portal for the Jester's Stash team. Sign in with credentials shared by your admin to access stock and sales tools." },
+      { property: "og:title", content: "Jester's Stash — Private Inventory & Sales Management" },
+      { property: "og:description", content: "Invite-only inventory and sales portal for approved Jester's Stash team members." },
+      { property: "og:url", content: "https://inventoryprojectschool.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://inventoryprojectschool.lovable.app/" }],
+  }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
@@ -36,7 +46,7 @@ function Landing() {
           </div>
         </div>
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight">Private, invite-only</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Jester&#39;s Stash — Private Inventory &amp; Sales</h1>
           <p className="text-sm text-muted-foreground">
             Jester&rsquo;s Stash is locked to approved team members. Sign in with the
             credentials your admin shared with you.
