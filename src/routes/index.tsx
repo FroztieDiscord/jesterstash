@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md space-y-6 rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-card)]">
         <div className="flex items-center gap-3">
           <div
@@ -66,6 +66,6 @@ function Landing() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
