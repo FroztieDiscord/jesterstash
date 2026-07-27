@@ -289,10 +289,12 @@ function InventoryPage() {
 function ProductDialog({
   initial,
   folders,
+  dirtyRef,
   onDone,
 }: {
   initial: Product | null;
   folders: Folder[];
+  dirtyRef: React.MutableRefObject<boolean>;
   onDone: () => void;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
@@ -304,6 +306,41 @@ function ProductDialog({
   const [barcode, setBarcode] = useState(initial?.barcode ?? "");
   const [unlimited, setUnlimited] = useState<boolean>(initial?.unlimited ?? false);
   const [image, setImage] = useState(initial?.image ?? "");
+
+  const snapshot = useRef({
+    name: initial?.name ?? "",
+    folderId: initial?.folderId ?? folders[0]?.id ?? "",
+    price: String(initial?.price ?? ""),
+    cost: String(initial?.cost ?? ""),
+    stock: String(initial?.stock ?? ""),
+    threshold: String(initial?.lowStockThreshold ?? 5),
+    barcode: initial?.barcode ?? "",
+    unlimited: initial?.unlimited ?? false,
+    image: initial?.image ?? "",
+  });
+
+  useEffect(() => {
+    const s = snapshot.current;
+    dirtyRef.current =
+      name !== s.name ||
+      folderId !== s.folderId ||
+      price !== s.price ||
+      cost !== s.cost ||
+      stock !== s.stock ||
+      threshold !== s.threshold ||
+      barcode !== s.barcode ||
+      unlimited !== s.unlimited ||
+      image !== s.image;
+  }, [name, folderId, price, cost, stock, threshold, barcode, unlimited, image, dirtyRef]);
+
+  function handleDelete() {
+    if (!initial) return;
+    if (confirm(`Delete ${initial.name}? This cannot be undone.`)) {
+      store.deleteProduct(initial.id);
+      dirtyRef.current = false;
+      onDone();
+    }
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -380,9 +417,22 @@ function ProductDialog({
           <Input value={barcode} onChange={(e) => setBarcode(e.target.value)} />
         </Field>
         <DialogFooter className="mt-2">
-          <Button type="submit" className="w-full">
-            {initial ? "Save changes" : "Add product"}
-          </Button>
+          {initial ? (
+            <div className="flex w-full gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="gap-2 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={handleDelete}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </Button>
+              <Button type="submit" className="flex-1">Save changes</Button>
+            </div>
+          ) : (
+            <Button type="submit" className="w-full">Add product</Button>
+          )}
         </DialogFooter>
       </form>
     </DialogContent>
