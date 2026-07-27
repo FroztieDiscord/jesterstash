@@ -1,0 +1,30 @@
+name: RLS policy check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "scripts/check-rls-policies.mjs"
+      - ".github/workflows/rls-check.yml"
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "scripts/check-rls-policies.mjs"
+      - ".github/workflows/rls-check.yml"
+
+jobs:
+  verify:
+    name: Verify member_applications & user_roles deny-by-default RLS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run RLS policy check
+        run: node scripts/check-rls-policies.mjs
