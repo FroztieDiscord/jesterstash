@@ -227,3 +227,42 @@ export const revokeMember = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
+/**
+ * Admin-only: set a fresh temporary password for a member and return it so
+ * the admin can share it out-of-band. The member can change it after login.
+ */
+export const setTempPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => emailSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const email = data.email.toLowerCase();
+
+    // Locate the user.
+    let userId: string | null = null;
+    let page = 1;
+    while (userId === null) {
+      const { data: list, error } =
+        await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+      if (error) throw new Error(error.message);
+      const found = list.users.find((u) => u.email?.toLowerCase() === email);
+      if (found) userId = found.id;
+      else if (list.users.length < 200) break;
+      else page += 1;
+    }
+    if (!userId) throw new Error("No such user");
+
+    // Generate a friendly-but-strong temp password.
+    const rand = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
+    const tempPassword = `Stash-${rand}!`;
+
+    const { error: updErr } = await supabaseAdmin.auth.admin.updateUserById(
+      userId,
+      { password: tempPassword, email_confirm: true },
+    );
+    if (updErr) throw new Error(updErr.message);
+
+    return { email, tempPassword };
+  });
