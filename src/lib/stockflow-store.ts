@@ -1,10 +1,15 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import aceImage from "@/assets/ace-ultra-premium.webp.asset.json";
 
+export type Folder = {
+  id: string;
+  name: string;
+};
+
 export type Product = {
   id: string;
   name: string;
-  category: string;
+  folderId: string;
   price: number;
   cost: number;
   stock: number;
@@ -29,20 +34,24 @@ export type Sale = {
 };
 
 type Store = {
+  folders: Folder[];
   products: Product[];
   sales: Sale[];
 };
 
-const KEY = "stockflow:v2";
+const KEY = "stockflow:v3";
 const listeners = new Set<() => void>();
 let cache: Store | null = null;
 
+const VAPES_FOLDER_ID = "f_vapes";
+
 const seed: Store = {
+  folders: [{ id: VAPES_FOLDER_ID, name: "Vapes" }],
   products: [
     {
       id: "p_vape1",
       name: "Vape 1ml",
-      category: "Vapes",
+      folderId: VAPES_FOLDER_ID,
       price: 1,
       cost: 0,
       stock: 0,
@@ -53,7 +62,7 @@ const seed: Store = {
     {
       id: "p_vape2",
       name: "Vape 2ml",
-      category: "Vapes",
+      folderId: VAPES_FOLDER_ID,
       price: 1,
       cost: 0,
       stock: 0,
@@ -65,6 +74,35 @@ const seed: Store = {
   sales: [],
 };
 
+function migrate(raw: unknown): Store {
+  const s = raw as Partial<Store> & {
+    products?: Array<Product & { category?: string }>;
+  };
+  const folders: Folder[] = Array.isArray(s.folders) ? s.folders : [];
+  const products: Product[] = [];
+  const byName = new Map(folders.map((f) => [f.name.toLowerCase(), f]));
+  for (const p of s.products ?? []) {
+    let folderId = (p as Product).folderId;
+    if (!folderId) {
+      const cat = ((p as { category?: string }).category ?? "Uncategorized").trim() || "Uncategorized";
+      const existing = byName.get(cat.toLowerCase());
+      if (existing) {
+        folderId = existing.id;
+      } else {
+        const f: Folder = { id: `f_${Math.random().toString(36).slice(2, 10)}`, name: cat };
+        folders.push(f);
+        byName.set(cat.toLowerCase(), f);
+        folderId = f.id;
+      }
+    }
+    const { category: _c, ...rest } = p as Product & { category?: string };
+    void _c;
+    products.push({ ...rest, folderId });
+  }
+  if (folders.length === 0) folders.push({ id: VAPES_FOLDER_ID, name: "Vapes" });
+  return { folders, products, sales: Array.isArray(s.sales) ? s.sales : [] };
+}
+
 function read(): Store {
   if (cache) return cache;
   if (typeof window === "undefined") {
@@ -75,6 +113,13 @@ function read(): Store {
     const raw = window.localStorage.getItem(KEY);
     if (raw) {
       cache = JSON.parse(raw) as Store;
+      return cache;
+    }
+    // migrate from v2
+    const legacy = window.localStorage.getItem("stockflow:v2");
+    if (legacy) {
+      cache = migrate(JSON.parse(legacy));
+      window.localStorage.setItem(KEY, JSON.stringify(cache));
       return cache;
     }
   } catch {
@@ -116,6 +161,40 @@ function uid(prefix: string) {
 }
 
 export const store = {
+  addFolder(name: string) {
+    const s = read();
+    const trimmed = name.trim();
+    if (!trimmed) return null;
+    const existing = s.folders.find((f) => f.name.toLowerCase() === trimmed.toLowerCase());
+    if (existing) return existing;
+    const f: Folder = { id: uid("f"), name: trimmed };
+    write({ ...s, folders: [...s.folders, f] });
+    return f;
+  },
+  renameFolder(id: string, name: string) {
+    const s = read();
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    write({ ...s, folders: s.folders.map((f) => (f.id === id ? { ...f, name: trimmed } : f)) });
+  },
+  deleteFolder(id: string, moveToId?: string) {
+    const s = read();
+    if (s.folders.length <= 1 && !moveToId) return;
+    const target = moveToId ?? s.folders.find((f) => f.id !== id)?.id;
+    if (!target) return;
+    write({
+      folders: s.folders.filter((f) => f.id !== id),
+      products: s.products.map((p) => (p.folderId === id ? { ...p, folderId: target } : p)),
+      sales: s.sales,
+    });
+  },
+  moveProduct(productId: string, folderId: string) {
+    const s = read();
+    write({
+      ...s,
+      products: s.products.map((p) => (p.id === productId ? { ...p, folderId } : p)),
+    });
+  },
   addProduct(p: Omit<Product, "id">) {
     const s = read();
     write({ ...s, products: [{ ...p, id: uid("p") }, ...s.products] });
@@ -145,7 +224,7 @@ export const store = {
       if (!it || p.unlimited) return p;
       return { ...p, stock: Math.max(0, p.stock - it.quantity) };
     });
-    write({ products, sales: [sale, ...s.sales] });
+    write({ ...s, products, sales: [sale, ...s.sales] });
     return sale;
   },
   deleteSale(id: string) {
