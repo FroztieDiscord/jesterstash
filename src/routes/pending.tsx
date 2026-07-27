@@ -8,7 +8,17 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/pending")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Application pending — Jester's Stash" }] }),
+  head: () => ({
+    meta: [
+      { title: "Application pending — Jester's Stash" },
+      { name: "description", content: "Your Jester's Stash account is awaiting admin approval. Access to the private inventory and sales portal unlocks once an admin approves your membership." },
+      { property: "og:title", content: "Application pending — Jester's Stash" },
+      { property: "og:description", content: "Awaiting admin approval to access the private Jester's Stash portal." },
+      { property: "og:url", content: "https://inventoryprojectschool.lovable.app/pending" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://inventoryprojectschool.lovable.app/pending" }],
+  }),
   component: PendingPage,
 });
 

@@ -1,0 +1,10 @@
+# Jester's Stash
+
+> Private, invite-only inventory and sales management portal for approved team members.
+
+Jester's Stash is not a public product. Access is granted by an admin; unapproved visitors cannot reach inventory, sales, or dashboard surfaces.
+
+## Pages
+
+- [Home](/): Overview of the private portal and entry point to sign in.
+- [Sign in](/auth): Team members sign in with credentials issued by an admin.

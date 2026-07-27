@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /inventory
+Disallow: /sale
+Disallow: /sales
+Disallow: /admin
+Disallow: /pending
+
+Sitemap: https://inventoryprojectschool.lovable.app/sitemap.xml

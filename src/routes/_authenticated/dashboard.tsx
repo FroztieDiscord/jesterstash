@@ -5,6 +5,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  head: () => ({
+    meta: [
+      { title: "Dashboard — Jester's Stash" },
+      { name: "description", content: "Team dashboard for Jester's Stash: monthly revenue, active inventory, sales today and this week, and low-stock alerts at a glance." },
+      { property: "og:title", content: "Dashboard — Jester's Stash" },
+      { property: "og:description", content: "Monthly revenue, inventory, and sales overview for the Jester's Stash team." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Dashboard,
 });
 
@@ -44,11 +53,11 @@ function Dashboard() {
       <section className="animate-fade-in relative overflow-hidden border border-primary/15 bg-card/40 p-10">
         <div className="pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full bg-primary/5 blur-3xl" />
         <div className="relative">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground/70">Monthly Revenue</p>
+          <h1 className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground/70">Dashboard · Monthly Revenue</h1>
           <div className="mt-3 flex items-baseline gap-4">
-            <h1 className="font-display text-6xl font-light tracking-tight text-foreground">
+            <p className="font-display text-6xl font-light tracking-tight text-foreground">
               {formatCurrency(monthTotal)}
-            </h1>
+            </p>
             <span className="font-display text-sm italic text-primary/80">
               &nbsp;· {salesMonth.length} transactions
             </span>
