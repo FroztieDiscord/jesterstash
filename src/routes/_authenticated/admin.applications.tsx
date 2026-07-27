@@ -134,7 +134,7 @@ function ApplicationsPage() {
     setBusyId("pwd:" + email);
     try {
       const res = await setTempPassword({ data: { email } });
-      setLastTempPassword(res);
+      setLastTempPassword({ email: res.email, password: res.tempPassword });
       toast.success(`Temporary password set for ${email}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed");
