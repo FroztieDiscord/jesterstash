@@ -17,6 +17,7 @@ import { Route as AuthenticatedSalesRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSaleRouteImport } from './routes/_authenticated/sale'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin.audit'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin.applications'
 
 const PendingRoute = PendingRouteImport.update({
@@ -58,6 +59,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/admin/audit',
+  path: '/admin/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminApplicationsRoute =
   AuthenticatedAdminApplicationsRouteImport.update({
     id: '/admin/applications',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/sale': typeof AuthenticatedSaleRoute
   '/sales': typeof AuthenticatedSalesRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/sale': typeof AuthenticatedSaleRoute
   '/sales': typeof AuthenticatedSalesRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/_authenticated/sale': typeof AuthenticatedSaleRoute
   '/_authenticated/sales': typeof AuthenticatedSalesRoute
   '/_authenticated/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/sale'
     | '/sales'
     | '/admin/applications'
+    | '/admin/audit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/sale'
     | '/sales'
     | '/admin/applications'
+    | '/admin/audit'
   id:
     | '__root__'
     | '/'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sale'
     | '/_authenticated/sales'
     | '/_authenticated/admin/applications'
+    | '/_authenticated/admin/audit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -196,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/admin/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/applications': {
       id: '/_authenticated/admin/applications'
       path: '/admin/applications'
@@ -212,6 +231,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSaleRoute: typeof AuthenticatedSaleRoute
   AuthenticatedSalesRoute: typeof AuthenticatedSalesRoute
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
+  AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -220,6 +240,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSaleRoute: AuthenticatedSaleRoute,
   AuthenticatedSalesRoute: AuthenticatedSalesRoute,
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
+  AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
